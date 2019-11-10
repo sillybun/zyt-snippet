@@ -78,7 +78,7 @@ endglobal
 
 priority 1000
 context "notstring()"
-snippet '^.*[\w\)\]}"\']/FF' "() frac" wrA
+snippet '^.*[\w\)\]}"\']/FF' "filter" wrA
 `!p
 stripped = match.string[:-3]
 i = start_of_object(stripped)
@@ -92,7 +92,7 @@ endsnippet
 
 priority 1000
 context "notstring()"
-snippet '^.*[\w\)\]}"\']/\]' "() frac" wrA
+snippet '^.*[\w\)\]}"\']/\]' "list comprehension" wrA
 `!p
 stripped = match.string[:-2]
 i = start_of_object(stripped)
