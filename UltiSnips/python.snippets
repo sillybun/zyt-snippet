@@ -1,0 +1,184 @@
+global !p
+def start_of_object(stripped):
+	i = len(stripped) - 1
+	depth = 0
+	instringsingle = False
+	instringdouble = False
+	while i >= 0:
+		if not instringsingle and not instringdouble:
+			if stripped[i] in [')', ']', '}']:
+				depth += 1
+				i-=1
+				continue
+			if stripped[i] in ['(', '[', '{']:
+				depth -= 1
+				if depth < 0:
+					break
+				i-=1
+				continue
+			if stripped[i] == '"':
+				instringdouble = True
+				i-=1
+				continue
+			if stripped[i] == '\'':
+				instringsingle = True
+				i-=1
+				continue
+			if stripped[i] in [' ', '+', '-', '*', '/', '=', ':', ',', '&'] and depth == 0:
+				break
+		elif instringsingle:
+			if stripped[i] == '\'' and (i == 0 or stripped[i-1] != '\\'):
+				instringsingle = False
+				i-=1
+				continue
+		else:
+			if stripped[i] == '"' and (i == 0 or stripped[i-1] != '\\'):
+				instringdouble = False
+				i-=1
+				continue
+		i-=1
+	return i + 1
+
+def numpy():
+	if vim.eval("search('import numpy', 'n')") != '0':
+		return True
+	else:
+		return False
+
+def notstring():
+	currentline = vim.eval("getline('.')")
+	currentline = currentline[0:int(vim.eval("col('.')"))]
+	i = 0
+	singlequote = False
+	doublequote = False
+	if '"' not in currentline and "'" not in currentline:
+		return True
+	while i < len(currentline):
+		if not singlequote and not doublequote:
+			if currentline[i] == "'":
+				singlequote = True
+			if currentline[i] == '"':
+				doublequote = True
+		elif singlequote:
+			if currentline[i] == '\\':
+				i+=2
+				continue
+			if currentline[i] == "'":
+				singlequote = False
+		else:
+			if currentline[i] == '\\':
+				i+=2
+				continue
+			if currentline[i] == "\"":
+				doublequote = False
+		# print(i, currentline[i], singlequote)
+		i+=1
+	return not singlequote and not doublequote
+endglobal
+
+priority 1000
+context "notstring()"
+snippet '^.*[\w\)\]}"\']/FF' "() frac" wrA
+`!p
+stripped = match.string[:-3]
+i = start_of_object(stripped)
+snip.rv = stripped[0:i] + "filter(lambda "
+`${1:x}: $1 $2, `!p
+stripped = match.string[:-3]
+i = start_of_object(stripped)
+snip.rv = stripped[i:-1] + ")"
+`
+endsnippet
+
+priority 1000
+context "notstring()"
+snippet '^.*[\w\)\]}"\']/\]' "() frac" wrA
+`!p
+stripped = match.string[:-2]
+i = start_of_object(stripped)
+snip.rv = stripped[0:i] + "["
+`${1:x} for $1 in `!p
+stripped = match.string[:-2]
+i = start_of_object(stripped)
+snip.rv = stripped[i:-1]
+` if $1 $2]
+endsnippet
+
+priority 1000
+context "notstring()"
+snippet '^.*[\w\)\]}"\']/,' "apply function" wrA
+`!p
+stripped = match.string[:-2]
+i = start_of_object(stripped)
+snip.rv = stripped[0:i]
+`${1:f}(`!p
+stripped = match.string[:-2]
+i = start_of_object(stripped)
+snip.rv = stripped[i:]
+`, $2)$0
+endsnippet
+
+
+priority 1000
+context "notstring()"
+snippet '^.*[\w\)\]}"\']//' "apply single value function" wrA
+`!p
+stripped = match.string[:-2]
+i = start_of_object(stripped)
+snip.rv = stripped[0:i]
+`${1:f}(`!p
+stripped = match.string[:-2]
+i = start_of_object(stripped)
+snip.rv = stripped[i:]
+`)$0
+endsnippet
+
+priority 1000
+context "notstring()"
+snippet '^(.*[\w\)\]}"\'])/([a-zA-Z][\w\.]*),' "apply function" wrA
+`!p
+stripped = match.group(1)
+i = start_of_object(stripped)
+snip.rv = stripped[0:i] + match.group(2) + "(" + stripped[i:] + ", "
+`$1)
+endsnippet
+
+priority 1000
+context "notstring()"
+snippet '^(.*[\w\)\]}"\']\))([a-zA-Z][\w\.]*),' "apply function" wrA
+`!p
+stripped = match.group(1)
+i = start_of_object(stripped)
+snip.rv = stripped[0:i] + match.group(2) + "(" + stripped[i:] + ", "
+`$1)
+endsnippet
+
+priority 1000
+context "notstring()"
+snippet '^(.*[\w\)\]}"\'])/([a-zA-Z][\w\.]*)/' "apply single value function" wrA
+`!p
+stripped = match.group(1)
+i = start_of_object(stripped)
+snip.rv = stripped[0:i] + match.group(2) + "(" + stripped[i:] + ")"
+`
+endsnippet
+
+priority 1000
+context "notstring()"
+snippet '^(.*[\w\)\]}"\']\))([a-zA-Z][\w\.]*)/' "apply single value function" wrA
+`!p
+stripped = match.group(1)
+i = start_of_object(stripped)
+snip.rv = stripped[0:i] + match.group(2) + "(" + stripped[i:] + ")"
+`
+endsnippet
+
+context "numpy()"
+snippet npz "np.zeros" wA
+np.zeros([$1], dtype=${2:float})
+endsnippet
+
+context "numpy()"
+snippet np* "np.dot" wA
+np.dot
+endsnippet
