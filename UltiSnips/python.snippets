@@ -100,7 +100,7 @@ snip.rv = stripped[0:i] + "["
 `${1:x} for $1 in `!p
 stripped = match.string[:-2]
 i = start_of_object(stripped)
-snip.rv = stripped[i:-1]
+snip.rv = stripped[i:]
 ` if $1 $2]
 endsnippet
 
@@ -181,4 +181,8 @@ endsnippet
 context "numpy()"
 snippet np* "np.dot" wA
 np.dot
+endsnippet
+
+snippet '(?<![a-zA-Z])(\d+)([a-zA-Z])' "2x" wrA
+`!p snip.rv=match.group(1)`*`!p snip.rv=match.group(2)`
 endsnippet
