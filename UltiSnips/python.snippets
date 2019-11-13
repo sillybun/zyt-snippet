@@ -107,7 +107,8 @@ def numpy():
 
 def notstring():
 	currentline = vim.eval("getline('.')")
-	currentline = currentline[0:int(vim.eval("col('.')"))]
+	currentline = currentline[0:int(vim.eval("col('.')"))-1]
+	# print(currentline)
 	i = 0
 	singlequote = False
 	doublequote = False
@@ -269,8 +270,9 @@ snippet '(for|while)\s+([a-zA-Z]\w*)\s*=' "for loop = -> for in" wrA
 `!p snip.rv=match.group(1) + " " + match.group(2)` in
 endsnippet
 
+context "notstring()"
 priority 1
-snippet '^(.*[\w\)\]])\?' "? expression" wrA
+snippet '^(.*[\w\)\]])\?' "? expression" wr
 `!p
 stripped = match.group(1)
 i = start_of_expression(stripped)
