@@ -1,4 +1,5 @@
 global !p
+import re
 def start_of_object(stripped):
 	i = len(stripped) - 1
 	depth = 0
@@ -24,8 +25,67 @@ def start_of_object(stripped):
 				instringsingle = True
 				i-=1
 				continue
-			if stripped[i] in [' ', '+', '-', '*', '/', '=', ':', ',', '&'] and depth == 0:
+			if stripped[i] in [' ', '+', '-', '*', '/', '=', ':', ',', '&', '>', '<'] and depth == 0:
 				break
+		elif instringsingle:
+			if stripped[i] == '\'' and (i == 0 or stripped[i-1] != '\\'):
+				instringsingle = False
+				i-=1
+				continue
+		else:
+			if stripped[i] == '"' and (i == 0 or stripped[i-1] != '\\'):
+				instringdouble = False
+				i-=1
+				continue
+		i-=1
+	return i + 1
+
+def start_of_expression(stripped):
+	i = len(stripped) - 1
+	depth = 0
+	instringsingle = False
+	instringdouble = False
+	flagspace = False
+	while i >= 0:
+		if not instringsingle and not instringdouble:
+			if stripped[i] in [')', ']', '}']:
+				depth += 1
+				i-=1
+				continue
+			if stripped[i] in ['(', '[', '{']:
+				depth -= 1
+				if depth < 0:
+					break
+				i-=1
+				continue
+			if stripped[i] == '"':
+				instringdouble = True
+				i-=1
+				continue
+			if stripped[i] == '\'':
+				instringsingle = True
+				i-=1
+				continue
+			if stripped[i] == ' ':
+				if not stripped[:i].strip():
+					break
+				if not stripped[i:].strip():
+					i-=1
+					continue
+				before = (stripped[:i].split())[-1]
+				after = (stripped[i+1:].split())[0]
+				if before in ['in', 'is', 'not', 'and', 'or']:
+					i-=1
+					continue
+				if after in ['in', 'is', 'not', 'and', 'or']:
+					i-=1
+					continue
+				if re.fullmatch("\w", before[-1]) and re.fullmatch("[\w\(\[{]", after[0]):
+					break
+				i-=1
+				continue
+			i-=1
+			continue
 		elif instringsingle:
 			if stripped[i] == '\'' and (i == 0 or stripped[i-1] != '\\'):
 				instringsingle = False
@@ -138,13 +198,13 @@ endsnippet
 
 priority 1000
 context "notstring()"
-snippet '^.*[\w\)\]}"\']//' "apply single value function" wrA
+snippet '^(.*[\w\)\]}"\'])//' "apply single value function" wrA
 `!p
-stripped = match.string[:-2]
+stripped = match.group(1)
 i = start_of_object(stripped)
 snip.rv = stripped[0:i]
 `${1:f}(`!p
-stripped = match.string[:-2]
+stripped = match.group(1)
 i = start_of_object(stripped)
 snip.rv = stripped[i:]
 `)$0
@@ -207,6 +267,19 @@ endsnippet
 priority 10000
 snippet '(for|while)\s+([a-zA-Z]\w*)\s*=' "for loop = -> for in" wrA
 `!p snip.rv=match.group(1) + " " + match.group(2)` in
+endsnippet
+
+priority 1
+snippet '^(.*[\w\)\]])\?' "? expression" wrA
+`!p
+stripped = match.group(1)
+i = start_of_expression(stripped)
+snip.rv = stripped[0:i]
+`$1 if `!p
+stripped = match.group(1)
+i = start_of_expression(stripped)
+snip.rv = stripped[i:]
+` else $2
 endsnippet
 
 priority 200
