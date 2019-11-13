@@ -245,3 +245,31 @@ previous_line = vim.eval("getline(" + match.group(1) + ")")
 snip.rv = previous_line.replace(match.group(2), match.group(3))
 `
 endsnippet
+
+# For Logging
+# CRITICAL	50
+# ERROR	40
+# WARNING	30
+# INFO	20
+# DEBUG	10
+snippet logpreset "Preset of Logging" bA
+import logging
+logging.basicConfig(format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s',
+                    level=logging.${1:DEBUG})
+endsnippet
+
+snippet "log([1-5])" "" rbA
+logging.`!p
+loglevel = int(match.group(1))
+if loglevel == 1:
+	snip.rv = "debug"
+elif loglevel == 2:
+	snip.rv = "info"
+elif loglevel == 3:
+	snip.rv = "warning"
+elif loglevel == 4:
+	snip.rv = "error"
+else:
+	snip.rv = "critical"
+`($1)$0
+endsnippet
