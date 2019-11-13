@@ -205,7 +205,7 @@ snippet '(?<![a-zA-Z])(\d+)([a-zA-Z])' "2x" wrA
 endsnippet
 
 priority 10000
-snippet '(for|while) ([a-zA-Z]\w*) =' "for loop = -> for in" wrA
+snippet '(for|while)\s+([a-zA-Z]\w*)\s*=' "for loop = -> for in" wrA
 `!p snip.rv=match.group(1) + " " + match.group(2)` in
 endsnippet
 
