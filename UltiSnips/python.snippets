@@ -158,11 +158,11 @@ snippet '^.*[\w\)\]}"\']/\]' "list comprehension" wrA
 stripped = match.string[:-2]
 i = start_of_object(stripped)
 snip.rv = stripped[0:i] + "["
-`${1:x} for $1 in `!p
+`${1:x} for x in `!p
 stripped = match.string[:-2]
 i = start_of_object(stripped)
 snip.rv = stripped[i:]
-` if $1 $2]
+`]
 endsnippet
 
 priority 1000
@@ -243,7 +243,7 @@ endsnippet
 
 priority 1000
 context "notstring()"
-snippet '^(.*[\w\)\]}"\']\))([a-zA-Z][\w\.]*)/' "apply single value function" wrA
+snippet '^(.*[\w\)\]}"\'\(]\))([a-zA-Z][\w\.]*)/' "apply single value function" wrA
 `!p
 stripped = match.group(1)
 i = start_of_object(stripped)
@@ -348,3 +348,14 @@ else:
 	snip.rv = "critical"
 `($1)$0
 endsnippet
+
+snippet matlabmat "matrix from MatLab" w
+`!p
+matdata = snip.v.text
+matdata = [x.split() for x in matdata.split('\n') if x]
+matdata = ["[" + ",".join(x) + "]" for x in matdata]
+matdata = "np.array([" + ",\n".join(matdata) + "])"
+snip.rv = matdata
+`
+endsnippet
+

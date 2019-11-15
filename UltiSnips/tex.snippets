@@ -15,6 +15,31 @@ def math():
 		return first != ignore
 	except StopIteration:
 		return False
+
+def findfirstoperator(line):
+    index = 0
+    depth = 0
+    while index < len(line):
+        if line[index] == '\s':
+            index += 1
+            continue
+        elif line[index] in ['{', '(']:
+            depth += 1
+            index += 1
+            continue
+        elif line[index] in ['}', ')']:
+            depth -= 1
+            index += 1
+            continue
+        elif depth <= 0 and line[index] == '=':
+            return index
+        elif depth <= 0 and all(line[index:].startswith(x) for x in ["\\le", "\\ge", ">", "<", "\\succ", "\\prec", "\\sim", "\\ne", "\\not"]):
+            return index
+        else:
+            index += 1
+            continue
+    else:
+        return len(line) - len(line.lstrip())
 endglobal
 
 snippet template "Basic template" b
@@ -107,7 +132,7 @@ snippet =< "implied by" Ai
 endsnippet
 
 context "math()"
-snippet iff "iff" Ai
+snippet iff "iff" wA
 \iff
 endsnippet
 
@@ -123,13 +148,34 @@ endsnippet
 snippet dm "Math" wA
 \[
 ${1:${VISUAL}}
-.\] $0
+\] $0
 endsnippet
 
 snippet ali "Align" bA
 \begin{align*}
 	${1:${VISUAL}}
-.\end{align*}
+\end{align*}
+endsnippet
+
+snippet vali "Align Virtual Selected" bA
+\begin{align*}
+`!p
+print(snip.v.text.split("\n"))
+selectedcode = [x for x in snip.v.text.split("\n") if x]
+for x in selectedcode:
+    index = findfirstoperator(x)
+    snip.rv += x[:index] + "&" + x[index:] + "\\\\\n"
+print(snip.rv.split("\n"))
+`\end{align*}
+endsnippet
+
+snippet bali "Align with {" bA
+\[
+\left\{
+\begin{align*}
+	${1:${VISUAL}}
+\end{align*}
+\]
 endsnippet
 
 
@@ -142,9 +188,25 @@ snippet / "Fraction" i
 \\frac{${VISUAL}}{$1}$0
 endsnippet
 
+priority 100
 context "math()"
 snippet '((\d+)|(\d*)(\\)?([A-Za-z]+)((\^|_)(\{\d+\}|\d))*)/' "symbol frac" wrA
 \\frac{`!p snip.rv = match.group(1)`}{$1}$0
+endsnippet
+
+priority 1000
+snippet '^(.*\))(\^\d|\^{[^{}]+})/' "()^2 frac" wrA
+`!p
+stripped = match.group(1)
+depth = 0
+i = len(stripped) - 1
+while True:
+	if stripped[i] == ')': depth += 1
+	if stripped[i] == '(': depth -= 1
+	if depth == 0: break;
+	i-=1
+snip.rv = stripped[0:i] + "\\frac{" + stripped[i:] + match.group(2) + "}"
+`{$1}$0
 endsnippet
 
 priority 1000
@@ -236,7 +298,7 @@ snippet ( "( )" iA
 ($1) $0
 endsnippet
 
-snippet lr "left( right)" iA
+snippet lrp "left( right)" iA
 \left( ${1:${VISUAL}} \right) $0
 endsnippet
 
@@ -256,7 +318,7 @@ snippet lrb "left\{ right\}" i
 \left\\{ ${1:${VISUAL}} \right\\} $0
 endsnippet
 
-snippet lr[ "left[ right]" i
+snippet lrB "left[ right]" iA
 \left[ ${1:${VISUAL}} \right] $0
 endsnippet
 
@@ -269,8 +331,8 @@ snippet conj "conjugate" iA
 \overline{$1}$0
 endsnippet
 
-snippet suma "sum of array" wA
-\sum_{${1:i}=${2:1}}^{${3:n}} $0
+snippet "(?<!\\)suma" "sum of array" wrA
+\sum_{${1:i}=${1}^{${2:n}} $0
 endsnippet
 
 snippet taylor "taylor" w
@@ -291,6 +353,10 @@ endsnippet
 
 snippet part "d/dx" w
 \frac{\partial ${1:V}}{\partial ${2:x}} $0
+endsnippet
+
+snippet diff "d/dx" w
+\frac{\mathrm{d}${1:y}}{\mathrm{d}${2:x}} $0
 endsnippet
 
 context "math()"
@@ -345,7 +411,7 @@ endsnippet
 
 context "math()"
 snippet EE "exist" iA
-\exists 
+\exists
 endsnippet
 
 context "math()"
@@ -375,9 +441,21 @@ snippet "\b([a-zA-Z])ii" "?i" riA
 `!p snip.rv=match.group(1)`_{i}
 endsnippet
 
+priority 101
+context "math()"
+snippet "(\d[a-zA-Z]|\\mu|\\alpha|\\sigma|\\rho|\\beta|\\gamma|\\delta|\\zeta|\\eta|\\varepsilon|\\theta|\\iota|\\kappa|\\vartheta|\\lambda|\\nu|\\pi|\\rho|\\tau|\\upsilon|\\phi|\\chi|\\psi|\\omega|\\Gamma|\\Delta|\\Theta|\\Lambda|\\Xi|\\Pi|\\Sigma|\\Upsilon|\\Phi|\\Psi|\\Omega)ii" "?i" riA
+`!p snip.rv=match.group(1)`_{i}
+endsnippet
+
 priority 100
 context "math()"
 snippet "\b([a-zA-Z])jj" "?j" riA
+`!p snip.rv=match.group(1)`_{j}
+endsnippet
+
+priority 100
+context "math()"
+snippet "(\d[a-zA-Z]|\\mu|\\alpha|\\sigma|\\rho|\\beta|\\gamma|\\delta|\\zeta|\\eta|\\varepsilon|\\theta|\\iota|\\kappa|\\vartheta|\\lambda|\\nu|\\pi|\\rho|\\tau|\\upsilon|\\phi|\\chi|\\psi|\\omega|\\Gamma|\\Delta|\\Theta|\\Lambda|\\Xi|\\Pi|\\Sigma|\\Upsilon|\\Phi|\\Psi|\\Omega)jj" "?j" riA
 `!p snip.rv=match.group(1)`_{j}
 endsnippet
 
@@ -469,19 +547,24 @@ endsnippet
 
 context "math()"
 snippet norm "norm" iA
-\|$1\|_{${2:2}} $0
+\|${1:${VISUAL}}\|_{2} $0
+endsnippet
+
+context "math()"
+snippet abs "abstract value" iA
+\left\vert ${1:${VISUAL}} \right\vert $0
 endsnippet
 
 priority 100
 context "math()"
-snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp)' "ln" rwA
+snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv)' "ln" rwA
 \\`!p snip.rv = match.group(1)`
 endsnippet
 
 priority 300
 context "math()"
 snippet dint "integral" wA
-\int_{${1:-\infty}}^{${2:\infty}} ${3:${VISUAL}} \mathrm{d} $0
+\int_{${1:-\infty}}^{${2:\infty}} ${3:${VISUAL}} \,\mathrm{d} $0
 endsnippet
 
 priority 300
@@ -530,7 +613,7 @@ snippet compl "complement" iA
 endsnippet
 
 context "math()"
-snippet \\\ "setminus" iA
+snippet -- "setminus" iA
 \setminus
 endsnippet
 
@@ -549,7 +632,7 @@ endsnippet
 
 context "math()"
 snippet set "set" wA
-\\{$1\\} $0
+\\{${1:$VISUAL}}\\} $0
 endsnippet
 
 snippet || "mid" iA
@@ -558,8 +641,8 @@ endsnippet
 
 
 context "math()"
-snippet cc "subset" Ai
-\subset 
+snippet cc "subset" bA
+\subseteq 
 endsnippet
 
 snippet notin "not in " iA
@@ -599,6 +682,10 @@ snippet RR "real" iA
 \mathbb{R}
 endsnippet
 
+snippet PP "Probability" wA
+\mathbb{P}
+endsnippet
+
 snippet QQ "Q" iA
 \mathbb{Q}
 endsnippet
@@ -627,10 +714,23 @@ snippet tt "text" iA
 endsnippet
 
 context "math()"
-snippet case "cases" wA
+snippet equation "equation" wA
 \begin{cases}
 	$1
 \end{cases}
+endsnippet
+
+context "math()"
+snippet case "cases" wA
+\begin{cases}
+	$1 & $2\\
+	$3 & $4\\
+\end{cases}
+endsnippet
+
+context "math()"
+snippet if "if" wA
+\mbox{if }
 endsnippet
 
 snippet SI "SI" iA
@@ -647,6 +747,14 @@ endsnippet
 snippet bigopt "Optimization problem" iA
 \begin{align*}
 	\min &\quad ${1:f(x)}\\\\
+	\text{s.t.} &\quad ${2:g(x)} \leq 0\\\\
+				&\quad ${3:h(x)} = 0\\\\
+\end{align*}
+endsnippet
+
+snippet bigmax "Optimization problem" iA
+\begin{align*}
+	\max &\quad ${1:f(x)}\\\\
 	\text{s.t.} &\quad ${2:g(x)} \leq 0\\\\
 				&\quad ${3:h(x)} = 0\\\\
 \end{align*}
@@ -688,9 +796,9 @@ snippet "(\\?[a-zA-Z]\w*)(,,)" "Vector postfix" riA
 \vec{`!p snip.rv=match.group(1)`}
 endsnippet
 
-snippet letw "let omega" iA
-Let $\Omega \subset \C$ be open.
-endsnippet
+# snippet letw "let omega" iA
+# Let $\Omega \subset \C$ be open.
+# endsnippet
 
 context "math()"
 snippet HH "H" iA
@@ -699,7 +807,7 @@ endsnippet
 
 context "math()"
 snippet mean "Expectation" iA
-\mathbb{E}
+\mathbb{E}\left[ $1 \right]
 endsnippet
 
 context "math()"
@@ -712,6 +820,7 @@ snippet conv "convex composition" iA
 ${1:\alpha} ${2:x} + (1 - $1) ${3:y}
 endsnippet
 
+context "math()"
 snippet range "i = 1, \ldots, n" iA
 ${1:i} = ${2:1}, \ldots, ${3:n}
 endsnippet
@@ -721,9 +830,15 @@ snippet eps "epsilon" wA
 \epsilon
 endsnippet
 
+priority 100
+context "math()"
+snippet "(?<![\\a-zA-Z])(tr|diag|rank|lcm)" "math function" wrA
+\\operatorname{`!p snip.rv = match.group(1)`}
+endsnippet
+
 priority 200
 context "math()"
-snippet "(?<![\\a-zA-Z])(mu|alpha|sigma|rho|beta|gamma|delta|zeta|eta|varepsilon|theta|iota|kappa|vartheta|lambda|nu|xi|pi|rho|tau|upsilon|phi|chi|psi|omega|Gamma|Delta|Theta|Lambda|Xi|Pi|Sigma|Upsilon|Phi|Psi|Omega)" "greek" wrA
+snippet "(?<![\\a-zA-Z])(mu|alpha|sigma|rho|beta|gamma|delta|zeta|eta|varepsilon|theta|iota|kappa|vartheta|lambda|nu|pi|rho|tau|upsilon|phi|chi|psi|omega|Gamma|Delta|Theta|Lambda|Xi|Pi|Sigma|Upsilon|Phi|Psi|Omega)" "greek" wrA
 \\`!p snip.rv = match.group(1)`
 endsnippet
 
@@ -735,6 +850,11 @@ endsnippet
 context "math()"
 snippet iid "independent and identical distribution" iA
 \overset{\text{i.i.d.}}{\sim}
+endsnippet
+
+context "math()"
+snippet def "define equal" wA
+\overset{\underset{\mathrm{def}}{}}{=}
 endsnippet
 
 # vim:ft=snippets
