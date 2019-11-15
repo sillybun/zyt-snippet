@@ -1,5 +1,7 @@
 global !p
 import re
+
+
 def start_of_object(stripped):
 	i = len(stripped) - 1
 	depth = 0
@@ -358,4 +360,3 @@ matdata = "np.array([" + ",\n".join(matdata) + "])"
 snip.rv = matdata
 `
 endsnippet
-

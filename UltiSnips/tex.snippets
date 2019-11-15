@@ -40,6 +40,106 @@ def findfirstoperator(line):
             continue
     else:
         return len(line) - len(line.lstrip())
+
+def generate_matrix_element(fe, position, shape):
+	if re.fullmatch("[a-zA-Z]_11", fe):
+		return fe[0] + "{}{}".format(position[0], position[1])
+	else:
+		return ""
+
+def generate_matrix(prefix, snip):
+	info = snip.buffer[snip.line]
+	# print(info, snip.snippet_start, snip.snippet_end)
+	spacelen = len(info) - len(info.lstrip())
+	linfo = info[:snip.snippet_start[1]]
+	rinfo = info[snip.snippet_end[1]:]
+	info = info[snip.snippet_start[1]:snip.snippet_end[1]]
+	# print([linfo, rinfo, info])
+	if len(info) > 1 and info[1].isnumeric():
+		real_shape = info[:2]
+		virtual_shape = info[2:]
+	else:
+		real_shape = info[0]
+		virtual_shape = info[1:]
+	if len(real_shape) == 1:
+		row_amount = int(real_shape)
+		column_amount = int(real_shape)
+	else:
+		row_amount = int(real_shape[0])
+		column_amount = int(real_shape[1])
+	if len(virtual_shape) == 0:
+		virtual_row_amount = "0"
+		virtual_column_amount = "0"
+	elif len(virtual_shape) == 1:
+		virtual_row_amount = virtual_shape[0]
+		virtual_column_amount = virtual_shape[0]
+	else:
+		virtual_row_amount = virtual_shape[0]
+		virtual_column_amount = virtual_shape[1]
+	# print(row_amount, column_amount, virtual_row_amount, virtual_column_amount)
+	snip.buffer[snip.line] = ''
+	displayed = linfo + "\\begin{%cmatrix}\n" % prefix
+	def generate_code(i, j, row, column, virtual_row, virtual_column):
+		code = """
+`!p
+vdot = False
+hdot = False
+i = %d
+j = %d
+row = %d
+column = %d
+virtual_row = "%c"
+virtual_column = "%c"
+if i > 1 and t[j].strip() == "\\\\vdots":
+	vdot = True
+if j > 1 and t[1 + column * (i - 1)].strip() == "\\\\cdots":
+	hdot = True
+if vdot and hdot:
+	snip.rv = "\\\\ddots"
+elif vdot:
+	snip.rv = "\\\\vdots"
+elif hdot:
+	snip.rv = "\\\\cdots"
+elif re.match(".*[a-zA-Z]_\{11\}", t[1]):
+	if virtual_row == "0":
+		snip.rv = re.sub("([a-zA-Z])_\{11\}", "\\g<1>_{" + str(i) + str(j) + "}", t[1])
+	else:
+		vdot = False
+		hdot = False
+		if %s:
+			hdot = True
+		if %s:
+			vdot = True
+		if not vdot and not hdot:
+			snip.rv = re.sub("([a-zA-Z])_\{11\}", "\\g<1>_{" + str(i) + str(j) + "}", t[1])
+		elif vdot and hdot:
+			snip.rv = re.sub("([a-zA-Z])_\{11\}", "\\g<1>_{" + virtual_row + ("-" + str(row - i) if i != row else "") + "," + virtual_column + ("-" + str(column - j) if j != column else "") + "}", t[1])
+		elif vdot:
+			snip.rv = re.sub("([a-zA-Z])_\{11\}", "\\g<1>_{" + str(i) + "," + virtual_column + ("-" + str(column - j) if j != column else "") + "}", t[1])
+		else:
+			snip.rv = re.sub("([a-zA-Z])_\{11\}", "\\g<1>_{" + virtual_row + ("-" + str(row - i) if i != row else "") + "," + str(j) + "}", t[1])
+else:
+	snip.rv = ""
+`
+""" % (i, j, row, column, virtual_row, virtual_column, " or ".join(["t[%d].strip() == '\\\\cdots'" % (1 + column * (x - 1)) for x in range(1, i)]) if i > 1 else "False", " or ".join(["t[%d].strip() == '\\\\vdots'" % x for x in range(1, j)]) if j > 1 else "False")
+		# if i == 5 and j == 5:
+		# 	print(code)
+		return code[1:-1]
+	if row_amount > 0 and column_amount > 0:
+		displayed += " " * (4 + len(linfo)) + "$1 " + ("& " if column_amount > 1 else "\\" * 4)
+		index = 2
+		for i in range(2, column_amount + 1):
+			displayed += "${" + "{}".format(index) + ":" + generate_code(1, i, row_amount, column_amount, virtual_row_amount, virtual_column_amount) + "} " + ("& " if i < column_amount else "\\" * 4)
+			index += 1
+		displayed += "\n"
+		for j in range(2, row_amount + 1):
+			displayed += " " * (4 + len(linfo))
+			for i in range(1, column_amount + 1):
+				displayed += "${" + "{}".format(index) + ":" + generate_code(j, i, row_amount, column_amount, virtual_row_amount, virtual_column_amount) + "} " + ("& " if i < column_amount else "\\" * 4)
+				index += 1
+			displayed += "\n"
+	displayed += " " * len(linfo) + "\\end{%cmatrix}" % prefix + (" " + rinfo if rinfo else "")
+	snip.expand_anon(displayed)
 endglobal
 
 snippet template "Basic template" b
@@ -153,31 +253,27 @@ endsnippet
 
 snippet ali "Align" bA
 \begin{align*}
-	${1:${VISUAL}}
-\end{align*}
-endsnippet
-
-snippet vali "Align Virtual Selected" bA
-\begin{align*}
-`!p
-print(snip.v.text.split("\n"))
+${1:`!p
 selectedcode = [x for x in snip.v.text.split("\n") if x]
-for x in selectedcode:
+for (i, x) in enumerate(selectedcode):
     index = findfirstoperator(x)
-    snip.rv += x[:index] + "&" + x[index:] + "\\\\\n"
-print(snip.rv.split("\n"))
-`\end{align*}
+    snip.rv += ("" if i == 0 else "    ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
+`}
+\end{align*}
 endsnippet
 
 snippet bali "Align with {" bA
 \[
 \left\{
 \begin{align*}
-	${1:${VISUAL}}
-\end{align*}
+${1:`!p
+selectedcode = [x for x in snip.v.text.split("\n") if x]
+for (i, x) in enumerate(selectedcode):
+    index = findfirstoperator(x)
+    snip.rv += ("" if i == 0 else "    ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
+`}\end{align*}
 \]
 endsnippet
-
 
 context "math()"
 snippet // "Fraction" iA
@@ -285,12 +381,22 @@ snippet floor "floor" iA
 \left\lfloor $1 \right\rfloor$0
 endsnippet
 
-snippet pmat "pmat" iA
+snippet pmat "pmat" w
 \begin{pmatrix} $1 \end{pmatrix} $0
 endsnippet
 
-snippet bmat "bmat" iA
+post_jump "generate_matrix('p', snip)"
+snippet "pmat\(([1-9]{1,2}[a-zA-Z]{0,2})\)" "pmat" irw
+`!p snip.rv = match.group(1)`
+endsnippet
+
+snippet bmat "bmat" w
 \begin{bmatrix} $1 \end{bmatrix} $0
+endsnippet
+
+post_jump "generate_matrix('b', snip)"
+snippet "bmat\(([1-9]{1,2}[a-zA-Z]{0,2})\)" "bmat" irw
+`!p snip.rv = match.group(1)`
 endsnippet
 
 context "math()"
