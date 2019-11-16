@@ -75,7 +75,7 @@ def generate_matrix_element(i, j, row, column, virtual_row, virtual_column, ht, 
             hdot = False
             if any([x.strip() == "\\vdots" for x in vt[:-1]]):
                 hdot = True
-            if any([x.strip() == "\\hdots" for x in ht[:-1]]):
+            if any([x.strip() == "\\cdots" for x in ht[:-1]]):
                 vdot = True
             flag = False
             biasandvirtualbias = False
@@ -115,12 +115,12 @@ def generate_matrix_element(i, j, row, column, virtual_row, virtual_column, ht, 
                             else:
                                 bias += -(row - i) * (x3 - x1) - (x3 - x1)
                                 if x3 != x1:
-                                    if x3 == x2 + 1:
+                                    if x3 == x1 + 1:
                                         virtual_bias += ("+" if virtual_bias else "") + virtual_row
-                                    elif x1 == x2 + 1:
+                                    elif x1 == x3 + 1:
                                         virtual_bias += "-" + virtual_row
                                     else:
-                                        virtual_bias += ("+" if virtual_bias and x2 > x1 else "") + str(x2 - x1) + virtual_row
+                                        virtual_bias += ("+" if virtual_bias and x3 > x1 else "") + str(x3 - x1) + virtual_row
                             if index > 0 and ht[1][index-1].isnumeric() and (biasandvirtualbias or (bias and virtual_bias)):
                                 value += ","
                             biasandvirtualbias = bias and virtual_bias
@@ -161,7 +161,7 @@ def generate_matrix_element(i, j, row, column, virtual_row, virtual_column, ht, 
                                     elif x1 == x3 + 1:
                                         virtual_bias += "-" + virtual_row
                                     else:
-                                        virtual_bias += ("+" if virtual_bias and x2 > x1 else "") + str(x2 - x1) + virtual_row
+                                        virtual_bias += ("+" if virtual_bias and x3 > x1 else "") + str(x3 - x1) + virtual_row
                             if index > 0 and ht[1][index-1].isnumeric() and (biasandvirtualbias or (bias and virtual_bias)):
                                 value += ","
                             biasandvirtualbias = bias and virtual_bias
