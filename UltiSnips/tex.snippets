@@ -136,6 +136,19 @@ def add_placeholder(snip):
 	# print(info)
 	snip.expand_anon(info)
 
+def add_package(packagename):
+	if packagename == "pgfplots" and vim.eval("search('\\\\usepackage{pgfplots}', 'n')") == '0':
+		try:
+			first = int(vim.eval("search('\\\\usepackage', 'n')"))
+			if first == 0:
+				first = int(vim.eval("search('\\documentclass', 'n')"))
+			else:
+				first -= 1
+		except:
+			first = 0
+		snip.buffer[first:first] = ['\\pgfplotsset{compat=1.16}']
+		snip.buffer[first:first] = ['\\usepackage{pgfplots}']
+
 def generate_matrix(prefix, snip):
 	info = snip.buffer[snip.line]
 	spacelen = len(info) - len(info.lstrip())
@@ -1039,6 +1052,7 @@ elif env_name == "enumerate":
 `
 endsnippet
 
+post_expand "add_package('pgfplots')"
 # (\s*,\s*\[([+\-]?\d+\.?\d*)\s*,\s*([+\-]?\d+\.?\d*)\])\s*
 snippet "tplot\(([\da-zA-Z\s+\-*/\(\),\^]+)\)" "plot function" wr
 \begin{figure}
@@ -1059,6 +1073,7 @@ snip.rv = expression
 \end{figure}$0
 endsnippet
 
+post_expand "add_package('pgfplots')"
 snippet "addplot\(([\da-zA-Z\s+\-*/\(\),\^]+)\)" "add another function" wr
 \addplot[${1:`!p
 color = ['blue', 'red', 'yellow', 'orange', 'green', 'magenta']
