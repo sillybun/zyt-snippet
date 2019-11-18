@@ -1,7 +1,6 @@
 global !p
 import re
 
-
 def start_of_object(stripped):
 	i = len(stripped) - 1
 	depth = 0
@@ -137,7 +136,17 @@ def notstring():
 		# print(i, currentline[i], singlequote)
 		i+=1
 	return not singlequote and not doublequote
+
+def head_writer(head_check, head_content, location="import", last = False, bias = 1):
+	# Usage:
+		# post_expand "head_writer('import numpy', ['import numpy as np'], bias = 0)"
+		# snippet "test" "this is a test" wr
+		# endsnippet
+	if vim.eval("search('%s', 'n')" % head_check) == "0":
+		loc = int(vim.eval("search('%s', 'n')" % location if not last else "search('%s', 'nb')" % location))
+		snip.buffer[max(loc+bias, 0):max(loc+bias, 0)] = head_content
 endglobal
+
 
 priority 1000
 context "notstring()"
@@ -380,4 +389,22 @@ matdata = ["[" + ",".join(x) + "]" for x in matdata]
 matdata = "np.array([" + ",\n".join(matdata) + "])"
 snip.rv = matdata
 `
+endsnippet
+
+# For PyTorch
+
+snippet "(py)?torchhead" "import pytorch" br
+import torch
+import torch.nn as nn
+`!p
+if not snip.c:
+	if vim.eval('search("import numpy", "n")') == "0":
+		snip.rv = "import numpy as np"
+	else:
+		snip.rv = ""
+`
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+endsnippet
+
+snippet 
 endsnippet

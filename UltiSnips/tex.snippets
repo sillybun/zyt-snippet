@@ -8,6 +8,14 @@ texIgnoreMathZoneIds = vim.eval('map('+str(texIgnoreMathZones)+", 'hlID(v:val)')
 
 ignore = texIgnoreMathZoneIds[0]
 
+HatSequence = r"\overline \bar \hat \tilde \widetilde \widehat".split()
+
+LeftArrows = r"\leftarrow|\longleftarrow|\Leftarrow|\Longleftarrow".split("|")
+
+RightArrows = r"\rightarrow|\longrightarrow|\Rightarrow|\Longrightarrow".split("|")
+
+LeftrightArrows = ["\\" + x for x in "leftrightarrow|longleftrightarrow|Leftrightarrow|Longleftrightarrow|iff".split("|")]
+
 import re
 
 def math():
@@ -1042,6 +1050,48 @@ context "math()"
 snippet def "define equal" wA
 \overset{\underset{\mathrm{def}}{}}{=}
 endsnippet
+
+context "math()"
+snippet "(\\(overline|bar|hat|tilde|widetilde|widehat))(\{[\w_]*\})?" "next type of hat" wr
+`!p
+index = HatSequence.index(match.group(1))
+try:
+	snip.rv = HatSequence[(index + 1) % len(HatSequence)] + match.group(3)
+except:
+	snip.rv = HatSequence[(index + 1) % len(HatSequence)]
+`
+endsnippet
+
+context "math()"
+
+snippet "(\\(leftarrow|longleftarrow|Leftarrow|Longleftarrow))" "next type of left arrow" wr
+`!p
+symbol_list = LeftArrows
+index = symbol_list.index(match.group(1))
+snip.rv = symbol_list[(index + 1) % len(symbol_list)]
+`
+endsnippet
+
+context "math()"
+snippet "(\\(rightarrow|longrightarrow|Rightarrow|Longrightarrow))" "next type of right arrow" wr
+`!p
+symbol_list = RightArrows
+index = symbol_list.index(match.group(1))
+snip.rv = symbol_list[(index + 1) % len(symbol_list)]
+`
+endsnippet
+
+
+context "math()"
+snippet "(\\(leftrightarrow|longleftrightarrow|Leftrightarrow|Longleftrightarrow|iff))" "next type of left right arrow" wr
+`!p
+symbol_list = LeftrightArrows
+index = symbol_list.index(match.group(1))
+snip.rv = symbol_list[(index + 1) % len(symbol_list)]
+`
+endsnippet
+
+
 
 post_jump "add_placeholder(snip)"
 context "environment()"
