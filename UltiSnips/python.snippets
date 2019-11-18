@@ -272,6 +272,32 @@ snippet '(for|while)\s+([a-zA-Z]\w*)\s*=' "for loop = -> for in" wrA
 `!p snip.rv=match.group(1) + " " + match.group(2)` in
 endsnippet
 
+priority 1000
+snippet "\braw_reg\((.*)\)" "raw regrex string" wr
+`!p
+regrex_string = match.group(1)
+regrex_string = re.sub('"', r'\"', regrex_string)
+regrex_string = re.sub('\'', r'\'', regrex_string)
+snip.rv = 'r"' + regrex_string + '"'
+`
+endsnippet
+
+priority 900
+snippet "\breg\((.*)\)" "regrex string" wr
+`!p
+regrex_string = match.group(1)
+regrex_string = re.sub(r'\\', r'\\\\', regrex_string)
+# print(regrex_string, len(regrex_string))
+regrex_string = re.sub('"', r'\"', regrex_string)
+regrex_string = re.sub('\'', r'\'', regrex_string)
+snip.rv = '"' + regrex_string + '"'
+`
+endsnippet
+
+snippet "\"([^\"\\]|\\.)*\"" "test" wr
+"this is a string"
+endsnippet
+
 context "notstring()"
 priority 1
 snippet '^(.*[\w\)\]])\?' "? expression" wr
