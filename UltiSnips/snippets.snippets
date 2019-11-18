@@ -1,0 +1,27 @@
+snippet snip "create snip" b
+snippet $1 "${2:snippet}" $3
+$4
+`!p snip.rv = "endsnippet"`
+endsnippet
+
+snippet vsearch "snippet" w
+int(vim.eval("search('$1'), 'n'"))
+endsnippet
+
+priority 1000
+snippet "\breg\((.*)\)" "raw regrex string" wr
+`!p
+regrex_string = match.group(1)
+regrex_string = re.sub('"', r'\"', regrex_string)
+regrex_string = re.sub('\'', r'\'', regrex_string)
+snip.rv = '"' + regrex_string + '"'
+`
+endsnippet
+
+snippet "rv" "snip.rv" brA
+snip.rv += $1
+endsnippet
+
+snippet @@ "match.group" w
+match.group($1)$0
+endsnippet

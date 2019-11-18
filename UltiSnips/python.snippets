@@ -100,8 +100,8 @@ def start_of_expression(stripped):
 		i-=1
 	return i + 1
 
-def numpy():
-	if vim.eval("search('import numpy', 'n')") != '0':
+def has_package(name="numpy"):
+	if vim.eval("search('import %s', 'n')" % name) != '0':
 		return True
 	else:
 		return False
@@ -262,12 +262,12 @@ snip.rv = stripped[0:i] + match.group(2) + "(" + stripped[i:] + ")"
 `
 endsnippet
 
-context "numpy()"
+context "has_package('numpy')"
 snippet npz "np.zeros" wA
 np.zeros([$1], dtype=${2:float})
 endsnippet
 
-context "numpy()"
+context "has_package('numpy')"
 snippet np* "np.dot" wA
 np.dot
 endsnippet
@@ -361,10 +361,10 @@ endsnippet
 # DEBUG	10
 snippet logpreset "Preset of Logging" bA
 import logging
-logging.basicConfig(format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s',
-                    level=logging.${1:DEBUG})
+logging.basicConfig(format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s', level=logging.${1:DEBUG})
 endsnippet
 
+post_expand "head_writer('import logging', ['import logging', 'logging.basicConfig(format=\'%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s\', level=logging.DEBUG)'], bias = 0)"
 snippet "log([1-5])" "" rbA
 logging.`!p
 loglevel = int(match.group(1))
@@ -406,5 +406,22 @@ if not snip.c:
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 endsnippet
 
-snippet 
+snippet "(print|log)\(loss\)" "print loss" wr
+`!p
+if match.group(1) == "print":
+	snip.rv += "print("
+else:
+	snip.rv += "logging.info("
+`'epoch [{}/{}], step [{}/{}], loss: {:.4f}'.format($1, $2, $3, $4, $5)$0
+endsnippet
+
+context "has_package('torch')"
+snippet "class(nn)" "class template for Neural Network"
+class $1(nn.Module):
+    def __init__(self, $2):
+        super($1, self).__init__()
+		${3:pass}
+
+    def forward(self, $4):
+		${5:pass}
 endsnippet
