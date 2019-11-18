@@ -287,7 +287,6 @@ snippet "\breg\((.*)\)" "regrex string" wr
 `!p
 regrex_string = match.group(1)
 regrex_string = re.sub(r'\\', r'\\\\', regrex_string)
-# print(regrex_string, len(regrex_string))
 regrex_string = re.sub('"', r'\"', regrex_string)
 regrex_string = re.sub('\'', r'\'', regrex_string)
 snip.rv = '"' + regrex_string + '"'
