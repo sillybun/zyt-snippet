@@ -416,12 +416,24 @@ else:
 endsnippet
 
 context "has_package('torch')"
-snippet "class(nn)" "class template for Neural Network"
+snippet class(nn) "class template for Neural Network" b
 class $1(nn.Module):
     def __init__(self, $2):
+		'''
+		Args:
+			`!p
+snip.rv = ("\n" + " " * 12).join(["%s: " % x.strip() for x in t[2].split(",")])
+`
+		'''
         super($1, self).__init__()
 		${3:pass}
 
     def forward(self, $4):
+		'''
+		Args:
+			`!p
+snip.rv = ("\n" + " " * 12).join(["%s: " % x.strip() for x in t[4].split(",")])
+`
+		'''
 		${5:pass}
 endsnippet

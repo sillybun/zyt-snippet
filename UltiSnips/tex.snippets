@@ -1155,21 +1155,22 @@ endsnippet
 post_expand "add_package('pgfplots')"
 snippet "addplot\(([\da-zA-Z\s+\-*/\(\),\^]+)\)" "add another function" wr
 \addplot[${1:`!p
-color = ['blue', 'red', 'yellow', 'orange', 'green', 'magenta']
-usedcolor = []
-for index in range(int(vim.eval("line('.')"))-1, 0, -1):
-	cline = vim.eval("getline(%d)" % index)
-	# print(index, cline)
-	ob = re.match(r"\\addplot\[([a-zA-Z]+)", cline)
-	if ob:
-		usedcolor.append(ob.group(1))
+if not snip.c:
+	color = ['blue', 'red', 'yellow', 'orange', 'green', 'magenta']
+	usedcolor = []
+	for index in range(int(vim.eval("line('.')"))-1, 0, -1):
+		cline = vim.eval("getline(%d)" % index)
+		# print(index, cline)
+		ob = re.match(r"\\addplot\[([a-zA-Z]+)", cline)
+		if ob:
+			usedcolor.append(ob.group(1))
+		else:
+			break
+	notused = [x for x in color if x not in usedcolor]
+	if notused:
+		snip.rv = notused[0]
 	else:
-		break
-notused = [x for x in color if x not in usedcolor]
-if notused:
-	snip.rv = notused[0]
-else:
-	snip.rv = "blue"
+		snip.rv = "blue"
 `}] plot ({\x},{`!p
 expression = match.group(1)
 expression = re.sub("(?<=\d)x", "*x", expression)
@@ -1177,21 +1178,27 @@ expression = re.sub("(?<![a-zA-Z])x(?![a-zA-Z])", r"\\x", expression)
 pindexs = sorted([findmatched_parentheses(expression, x.span()[1]) for x in re.finditer(r"\bsin\b", expression)])
 expression = " r".join([expression[x:y] for x, y in zip([0] + pindexs, pindexs + [len(expression)])])
 line_number = int(vim.eval("line('.')"))
-last_line = vim.eval("getline(%d)" % (line_number-1))
-ob = re.fullmatch(r".*,\s*([\w+\-.]+)\),\s*([\w+\-.]+)\)\}\);", last_line)
+index = 1
+last_line = ""
+while index < line_number:
+	last_line = vim.eval("getline(%d)" % (line_number-index))
+	index += 1
+	ob = re.fullmatch(r".*,\s*([\w+\-.]+)\),\s*([\w+\-.]+)\)\}\);", last_line)
+	if ob:
+		break
 expression = "max(min(%s, %s), %s)" % (expression, ob.group(1), ob.group(2))
 snip.rv = expression
 `});$0
 endsnippet
 
 context "math()"
-snippet "^.*(\\right\s*[\)\]]|(?<!\\right)[\)\]])" "snippet" wr
+snippet "^.*(\\right\s*[\)\]]|\S(?<!\\right)\s*[\)\]])" "snippet" wr
 `!p
 line = match.string
 left_parentheses = findmatched_parentheses(line, len(line) - 1)
-if match.group(1) == ")":
+if match.group(1)[-1] == ")" and not re.fullmatch(r"\\right\s*\)", match.group(1)):
 	snip.rv += line[:left_parentheses] + "\\left(" + line[left_parentheses+1:-1] + "\\right)"
-elif match.group(1) == "]":
+elif match.group(1)[-1] == "]" and not re.fullmatch(r"\\right\s*\]", match.group(1)):
 	snip.rv += line[:left_parentheses] + "\\left[" + line[left_parentheses+1:-1] + "\\right]"
 elif match.group(1)[-1] == ")":
 	snip.rv += line[:left_parentheses].rstrip()[:-5] + "(" + line[left_parentheses+1:-1].rstrip()[:-6] + ")"
