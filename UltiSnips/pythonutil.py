@@ -231,3 +231,31 @@ def generate_matrix_element(i, j, row, column, virtual_row, virtual_column, ht, 
                 return ""
     else:
         return ""
+
+def first_p1_not_p2(line, p1, p2):
+    p1s = re.search(p1, line)
+    p2s = re.search(p2, line)
+    if p1s and not p2s:
+        return 1
+    if p2s and not p1s:
+        return -1
+    if not p1s and not p2s:
+        return 0
+    if [x for x in re.finditer(p1, line)][0].span()[0] < [x for x in re.finditer(p2, line)][0].span()[0]:
+        return 1
+    else:
+        return -1
+
+def last_p1_not_p2(line, p1, p2):
+    p1s = re.search(p1, line)
+    p2s = re.search(p2, line)
+    if p1s and not p2s:
+        return 1
+    if p2s and not p1s:
+        return -1
+    if not p1s and not p2s:
+        return 0
+    if [x for x in re.finditer(p1, line)][-1].span()[0] > [x for x in re.finditer(p2, line)][-1].span()[0]:
+        return 1
+    else:
+        return -1

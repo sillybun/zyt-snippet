@@ -22,6 +22,8 @@ snippet "rv" "snip.rv" brA
 snip.rv += $1
 endsnippet
 
-snippet @@ "match.group" w
-match.group($1)$0
+snippet "@@(\((\d+)\))" "match.group" wr
+match.group(${1:`!p
+snip.rv = match.group(2)
+`})$0
 endsnippet
