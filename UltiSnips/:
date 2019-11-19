@@ -19,45 +19,10 @@ LeftrightArrows = ["\\" + x for x in "leftrightarrow|longleftrightarrow|Leftrigh
 import re
 
 def math():
-	if vim_left_p1_before_p2(r"https://www.zhihu.com/equation\?tex=.*\"\s+alt=\"", r"eeimg=\"") and vim_right_p1_before_p2(r"eeimg=\"", r"tex=.*\"\s+alt=\""):
+	if vim_left_p1_before_p2(r"https://www.zhihu.com/equation?tex=.*\" +alt=\"", r"eeimg=\"") and vim_right_p1_before_p2(r"eeimg=\"", r"alt=\""):
 		return True
-	lp = " ".join(vim_left_paragraph())
-	rp = " ".join(vim_right_paragraph())
-	lp = re.sub(r"(?<!\\)(\\\\)*\\$", "", lp)
-	lp = re.sub(r"(?<!\\)(\\\\)*$$", "", lp)
-	rp = re.sub(r"(?<!\\)(\\\\)*$$", "", rp)
-	if lp.count("$") % 2 == 1 and "$" in rp:
-		return True
-	return False
-
-def vim_left_paragraph():
-	currentlinenumber = int(vim.eval("line('.')"))
-	currentline = vim.eval("getline('.')")
-	currentcol = int(vim.eval("col('.')"))
-	left = currentline[0:currentcol-1]
-	lp = [left]
-	# lp.append(left)
-	for index in range(currentlinenumber-1, -1, -1):
-		tline = vim.eval("getline(%d)" % index)
-		if not tline.strip():
-			return False
-		lp = [tline] + lp
-	print(lp)
-	return lp
-
-def vim_right_paragraph():
-	currentlinenumber = int(vim.eval("line('.')"))
-	currentline = vim.eval("getline('.')")
-	currentcol = int(vim.eval("col('.')"))
-	right = currentline[currentcol-1:]
-	rp = [right]
-	for index in range(currentlinenumber+1, int(vim.eval("line('$')")) + 1):
-		tline = vim.eval("getline(%d)" % index)
-		if not tline.strip():
-			return False
-		rp.append(tline)
-	print(rp)
-	return rp
+	else:
+		return False
 
 def vim_left_have(pattern):
 	currentlinenumber = int(vim.eval("line('.')"))
