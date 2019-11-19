@@ -491,7 +491,10 @@ endsnippet
 post_jump "generate_matrix('p', snip)"
 context "math()"
 snippet "pmat\(([1-9]{1,2}[a-zA-Z]{0,2})\)" "pmat" irw
-`!p snip.rv = match.group(1)`
+`!p
+if not snip.c:
+	snip.rv = match.group(1)
+`
 endsnippet
 
 snippet bmat "bmat" w
@@ -502,7 +505,10 @@ endsnippet
 post_jump "generate_matrix('b', snip)"
 context "math()"
 snippet "bmat\(([1-9]{1,2}[a-zA-Z]{0,2})\)" "bmat" irw
-`!p snip.rv = match.group(1)`
+`!p
+if not snip.c:
+	snip.rv = match.group(1)
+`
 endsnippet
 
 context "math()"

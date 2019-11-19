@@ -1,12 +1,4 @@
 global !p
-# texMathZones = ['texMathZone'+x for x in ['A', 'AS', 'B', 'BS', 'C', 'CS', 'D', 'DS', 'E', 'ES', 'F', 'FS', 'G', 'GS', 'H', 'HS', 'I', 'IS', 'J', 'JS', 'K', 'KS', 'L', 'LS', 'DS', 'V', 'W', 'X', 'Y', 'Z']]
-
-# texIgnoreMathZones = ['texMathText']
-
-# texMathZoneIds = vim.eval('map('+str(texMathZones)+", 'hlID(v:val)')")
-# texIgnoreMathZoneIds = vim.eval('map('+str(texIgnoreMathZones)+", 'hlID(v:val)')")
-
-# ignore = texIgnoreMathZoneIds[0]
 
 HatSequence = r"\overline \bar \hat \tilde \widetilde \widehat".split()
 
@@ -22,7 +14,7 @@ sys.path.append(vim.eval("g:ZYTSNIP_PATH") + "UltiSnips")
 from pythonutil import *
 
 def math():
-	if vim_left_p1_before_p2(r"https://www.zhihu.com/equation\?tex=.*\"\s+alt=\"", r"eeimg=\"") and vim_right_p1_before_p2(r"eeimg=\"", r"tex=.*\"\s+alt=\""):
+	if vim_left_last_p1_not_p2(r"https://www.zhihu.com/equation\?tex=\" alt=\"", r"eeimg=\"") and vim_right_first_p1_not_p2(r"eeimg=\"", r"https://www.zhihu.com/equation\?tex=\" alt=\""):
 		return True
 	lp = vim_left_paragraph()
 	rp = vim_right_paragraph()
@@ -94,22 +86,22 @@ def vim_right_have(pattern):
 			return True
 
 
-def vim_left_p1_before_p2(p1, p2):
+def vim_left_last_p1_not_p2(p1, p2):
 	currentlinenumber = int(vim.eval("line('.')"))
-	currentline = vim.eval("getline('.')")
-	currentcol = int(vim.eval("col('.')"))
-	left = currentline[:currentcol-1]
+	# currentline = vim.eval("getline('.')")
+	# currentcol = int(vim.eval("col('.')"))
+	left = vim.eval("getline('.')[:col('.')-2]")
 	p1s = re.search(p1, left)
 	p2s = re.search(p2, left)
+	# print(p1, left, p1s)
+	# print(p2, left, p2s)
+	# print("left: $%s$" % left)
 	if p1s and not p2s:
 		return True
 	if p2s and not p1s:
 		return False
 	if p1s and p2s:
-		if [x for x in re.finditer(p1, left)][0].span()[0] < [x for x in re.finditer(p2, left)][0].span()[0]:
-			return True
-		else:
-			return False
+		return last_p1_not_p2(left, p1, p2) == 1
 	else:
 		for index in range(int(vim.eval("line('$')")) - 1, 0, -1):
 			tline = vim.eval("getline(%d)" % index)
@@ -122,27 +114,26 @@ def vim_left_p1_before_p2(p1, p2):
 			if p2s and not p1s:
 				return False
 			if p1s and p2s:
-				if [x for x in re.finditer(p1, tline)][0].span()[0] < [x for x in re.finditer(p2, tline)][0].span()[0]:
-					return True
-				else:
-					return False
+				return last_p1_not_p2(tline, p1, p2) == 1
+	return False
 
-def vim_right_p1_before_p2(p1, p2):
+def vim_right_first_p1_not_p2(p1, p2):
 	currentlinenumber = int(vim.eval("line('.')"))
-	currentline = vim.eval("getline('.')")
-	currentcol = int(vim.eval("col('.')"))
-	right = currentline[currentcol-1:]
+	# currentline = vim.eval("getline('.')")
+	# currentcol = int(vim.eval("col('.')"))
+	# right = currentline[currentcol-1:]
+	right = vim.eval("getline('.')[col('.')-1:]")
 	p1s = re.search(p1, right)
 	p2s = re.search(p2, right)
+	# print(p1, right, p1s)
+	# print(p2, right, p2s)
+	# print("right: $%s$" % right)
 	if p1s and not p2s:
 		return True
 	if p2s and not p1s:
 		return False
 	if p1s and p2s:
-		if [x for x in re.finditer(p1, right)][0].span()[0] < [x for x in re.finditer(p2, right)][0].span()[0]:
-			return True
-		else:
-			return False
+		return first_p1_not_p2(right, p1, p2) == 1
 	else:
 		for index in range(currentlinenumber+1, int(vim.eval("line('$')")) + 1):
 			tline = vim.eval("getline(%d)" % index)
@@ -155,10 +146,8 @@ def vim_right_p1_before_p2(p1, p2):
 			if p2s and not p1s:
 				return False
 			if p1s and p2s:
-				if [x for x in re.finditer(p1, tline)][0].span()[0] < [x for x in re.finditer(p2, tline)][0].span()[0]:
-					return True
-				else:
-					return False
+				return first_p1_not_p2(tline, p1, p2) == 1
+	return False
 
 
 
@@ -312,7 +301,7 @@ def generate_matrix(prefix, snip):
 	linfo = info[:snip.snippet_start[1]]
 	rinfo = info[snip.snippet_end[1]:]
 	info = info[snip.snippet_start[1]:snip.snippet_end[1]]
-	# print([linfo, rinfo, info])
+	# print([linfo, info, rinfo])
 	if len(info) > 1 and info[1].isnumeric():
 		real_shape = info[:2]
 		virtual_shape = info[2:]
@@ -361,6 +350,7 @@ snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
 				index += 1
 			displayed += "\n"
 	displayed += " " * len(linfo) + "\\end{%cmatrix}$0" % prefix + (" " + rinfo if rinfo else "")
+	print("DISPLAYED: %s" % displayed)
 	snip.expand_anon(displayed)
 endglobal
 
@@ -479,28 +469,40 @@ snippet iff "iff" wA
 \iff
 endsnippet
 
+# snippet mk "Math" wA
+# $${1}$`!p
+# if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
+# 	snip.rv = ' '
+# else:
+# 	snip.rv = ''
+# `$2
+# endsnippet
+
+context "not math()"
 snippet mk "Math" wA
-$${1}$`!p
-if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
-	snip.rv = ' '
-else:
-	snip.rv = ''
-`$2
+<img src="https://www.zhihu.com/equation?tex=" alt="$1" eeimg="1">
 endsnippet
 
-snippet zk "Math" wA
-<img src="https://www.zhihu.com/equation?tex=p" alt="$1" eeimg="1">
-endsnippet
-
-snippet zm "Math" wA
-<img src="https://www.zhihu.com/equation?tex=p" alt="$1\\\\" eeimg="1">
-endsnippet
-
+context "not math()"
 snippet dm "Math" wA
-$$
-${1}
-$$$0
+<img src="https://www.zhihu.com/equation?tex=" alt="$1\\\\" eeimg="1">
 endsnippet
+
+context "not math()"
+snippet cbt "text with color" w
+<img src="https://www.zhihu.com/equation?tex=" alt="\bbox[#E8F8FF, 4px, border:1px solid gray]{\color{blue}{\texttt{$1}}}" eeimg="1">$0
+endsnippet
+
+context "not math()"
+snippet ct "text with color" w
+<img src="https://www.zhihu.com/equation?tex=" alt="{\color{blue}{\texttt{$1}}}" eeimg="1">$0
+endsnippet
+
+# snippet dm "Math" wA
+# $$
+# ${1}
+# $$$0
+# endsnippet
 
 snippet ali "Align" bA
 \begin{align*}
@@ -652,7 +654,10 @@ endsnippet
 post_jump "generate_matrix('b', snip)"
 context "math()"
 snippet "bmat\(([1-9]{1,2}[a-zA-Z]{0,2})\)" "bmat" irw
-`!p snip.rv = match.group(1)`
+`!p
+if not snip.c:
+	snip.rv = match.group(1)
+`
 endsnippet
 
 context "math()"
@@ -694,7 +699,7 @@ snippet conj "conjugate" iA
 endsnippet
 
 snippet "(?<!\\)suma" "sum of array" wrA
-\sum_{${1:i}=${1}^{${2:n}} $0
+\sum_{${1:i}=1}^{${2:n}} $0
 endsnippet
 
 snippet taylor "taylor" w
@@ -1094,26 +1099,26 @@ snippet SI "SI" iA
 endsnippet
 
 snippet bigfun "Big function" iA
-\begin{align*}
+<img src="https://www.zhihu.com/equation?tex=" alt="\begin{align}
 	$1\colon $2 &\longrightarrow $3 \\\\
 	$4 &\longmapsto $1(${4/[\(\)]//g}) = $0
-\end{align*}
+\end{align}\\\\" eeimg="1">
 endsnippet
 
 snippet bigopt "Optimization problem" iA
-\begin{align*}
+<img src="https://www.zhihu.com/equation?tex=" alt="\begin{align}
 	\min &\quad ${1:f(x)}\\\\
 	\text{s.t.} &\quad ${2:g(x)} \leq 0\\\\
 				&\quad ${3:h(x)} = 0\\\\
-\end{align*}
+\end{align}\\\\" eeimg="1">
 endsnippet
 
 snippet bigmax "Optimization problem" iA
-\begin{align*}
+<img src="https://www.zhihu.com/equation?tex=" alt="\begin{align}
 	\max &\quad ${1:f(x)}\\\\
 	\text{s.t.} &\quad ${2:g(x)} \leq 0\\\\
 				&\quad ${3:h(x)} = 0\\\\
-\end{align*}
+\end{align}\\\\" eeimg="1">
 endsnippet
 
 snippet dfun "Definition of function" iA
@@ -1238,7 +1243,6 @@ snip.rv = symbol_list[(index + 1) % len(symbol_list)]
 `
 endsnippet
 
-
 context "math()"
 snippet "(\\(leftrightarrow|longleftrightarrow|Leftrightarrow|Longleftrightarrow|iff))" "next type of left right arrow" wr
 `!p
@@ -1247,8 +1251,6 @@ index = symbol_list.index(match.group(1))
 snip.rv = symbol_list[(index + 1) % len(symbol_list)]
 `
 endsnippet
-
-
 
 post_jump "add_placeholder(snip)"
 context "environment(lastemptyline = True)"
@@ -1273,66 +1275,6 @@ elif re.search("matrix", env_name):
 elif env_name == "enumerate":
 	snip.rv = " " * (len(last_line) - len(last_line.lstrip())) + "\item $1"
 `
-endsnippet
-
-post_expand "add_package('pgfplots')"
-# (\s*,\s*\[([+\-]?\d+\.?\d*)\s*,\s*([+\-]?\d+\.?\d*)\])\s*
-snippet "tplot\(([\da-zA-Z\s+\-*/\(\),\^]+)\)" "plot function" wr
-\begin{figure}
-\centering
-\begin{tikzpicture}
-\begin{axis}[samples=500,domain= ${1:-pi} : ${2:${1/-//g}} ,restrict y to domain = ${3:$1} : ${4:${3/-//g}}]
-\addplot[${5:blue}] plot ({\x},{`!p
-expression = match.group(1)
-expression = re.sub("(?<=\d)x", "*x", expression)
-expression = re.sub("(?<![a-zA-Z])x(?![a-zA-Z])", r"\\x", expression)
-pindexs = sorted([findmatched_parentheses(expression, x.span()[1]) for x in re.finditer(r"\bsin\b", expression)])
-expression = " r".join([expression[x:y] for x, y in zip([0] + pindexs, pindexs + [len(expression)])])
-expression = "max(min(%s, %s), %s)" % (expression, t[4], t[3])
-snip.rv = expression
-`});
-\end{axis}
-\end{tikzpicture}
-\end{figure}$0
-endsnippet
-
-post_expand "add_package('pgfplots')"
-snippet "addplot\(([\da-zA-Z\s+\-*/\(\),\^]+)\)" "add another function" wr
-\addplot[${1:`!p
-if not snip.c:
-	color = ['blue', 'red', 'yellow', 'orange', 'green', 'magenta']
-	usedcolor = []
-	for index in range(int(vim.eval("line('.')"))-1, 0, -1):
-		cline = vim.eval("getline(%d)" % index)
-		# print(index, cline)
-		ob = re.match(r"\\addplot\[([a-zA-Z]+)", cline)
-		if ob:
-			usedcolor.append(ob.group(1))
-		else:
-			break
-	notused = [x for x in color if x not in usedcolor]
-	if notused:
-		snip.rv = notused[0]
-	else:
-		snip.rv = "blue"
-`}] plot ({\x},{`!p
-expression = match.group(1)
-expression = re.sub("(?<=\d)x", "*x", expression)
-expression = re.sub("(?<![a-zA-Z])x(?![a-zA-Z])", r"\\x", expression)
-pindexs = sorted([findmatched_parentheses(expression, x.span()[1]) for x in re.finditer(r"\bsin\b", expression)])
-expression = " r".join([expression[x:y] for x, y in zip([0] + pindexs, pindexs + [len(expression)])])
-line_number = int(vim.eval("line('.')"))
-index = 1
-last_line = ""
-while index < line_number:
-	last_line = vim.eval("getline(%d)" % (line_number-index))
-	index += 1
-	ob = re.fullmatch(r".*,\s*([\w+\-.]+)\),\s*([\w+\-.]+)\)\}\);", last_line)
-	if ob:
-		break
-expression = "max(min(%s, %s), %s)" % (expression, ob.group(1), ob.group(2))
-snip.rv = expression
-`});$0
 endsnippet
 
 context "math()"
