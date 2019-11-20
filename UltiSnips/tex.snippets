@@ -199,7 +199,7 @@ def generate_matrix(prefix, snip):
 		virtual_row_amount = virtual_shape[0]
 		virtual_column_amount = virtual_shape[1]
 	snip.buffer[snip.line] = ''
-	displayed = linfo + "\\begin{%cmatrix}\n" % prefix
+	displayed = re.sub(r"\\", r"\\\\", linfo) + "\\begin{%cmatrix}\n" % prefix
 	def generate_code(i, j, row, column, virtual_row, virtual_column):
 		if i == 1 and j == 1:
 			return ""
@@ -224,7 +224,7 @@ snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
 				displayed += "${" + "{}".format(index) + ":" + generate_code(j, i, row_amount, column_amount, virtual_row_amount, virtual_column_amount) + "}\t" + ("& " if i < column_amount else "\\" * 4)
 				index += 1
 			displayed += "\n"
-	displayed += " " * len(linfo) + "\\end{%cmatrix}$0" % prefix + (" " + rinfo if rinfo else "")
+	displayed += " " * len(linfo) + "\\end{%cmatrix}$0" % prefix + (" " + sub(r"\\", r"\\\\", rinfo) if rinfo else "")
 	snip.expand_anon(displayed)
 endglobal
 

@@ -13,6 +13,10 @@ import sys
 sys.path.append(vim.eval("g:ZYTSNIP_PATH") + "UltiSnips")
 from pythonutil import *
 
+def back_parentheses():
+	right = vim.eval("getline('.')[col('.')-1:]")
+	return right.lstrip().startswith(")")
+
 def math():
 	if vim_left_last_p1_not_p2(r"https://www.zhihu.com/equation\?tex=\" alt=\"", r"eeimg=\"") and vim_right_first_p1_not_p2(r"eeimg=\"", r"https://www.zhihu.com/equation\?tex=\" alt=\""):
 		return True
@@ -277,10 +281,13 @@ def findmatched_parentheses(line, lindex):
 	return -1
 
 def add_placeholder(snip):
-	info = snip.buffer[snip.line]
-	snip.buffer[snip.line] = ''
-	# print(info)
-	snip.expand_anon(info)
+	"""
+	just one line
+	"""
+	# info = snip.buffer[snip.line]
+	# snip.buffer[snip.line] = ''
+	# snip.expand_anon(info)
+		
 
 def add_package(packagename):
 	if packagename == "pgfplots" and vim.eval("search('\\\\usepackage{pgfplots}', 'n')") == '0':
@@ -324,7 +331,7 @@ def generate_matrix(prefix, snip):
 		virtual_row_amount = virtual_shape[0]
 		virtual_column_amount = virtual_shape[1]
 	snip.buffer[snip.line] = ''
-	displayed = linfo + "\\begin{%cmatrix}\n" % prefix
+	displayed = re.sub(r"\\", r"\\\\", linfo) + "\\begin{%cmatrix}\n" % prefix
 	def generate_code(i, j, row, column, virtual_row, virtual_column):
 		if i == 1 and j == 1:
 			return ""
@@ -349,8 +356,7 @@ snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
 				displayed += "${" + "{}".format(index) + ":" + generate_code(j, i, row_amount, column_amount, virtual_row_amount, virtual_column_amount) + "}\t" + ("& " if i < column_amount else "\\" * 4)
 				index += 1
 			displayed += "\n"
-	displayed += " " * len(linfo) + "\\end{%cmatrix}$0" % prefix + (" " + rinfo if rinfo else "")
-	print("DISPLAYED: %s" % displayed)
+	displayed += " " * len(linfo) + "\\end{%cmatrix}$0" % prefix + (" " + re.sub(r"\\", r"\\\\", rinfo) if rinfo else "")
 	snip.expand_anon(displayed)
 endglobal
 
@@ -425,37 +431,6 @@ snippet table "Table environment" b
 \end{table}
 endsnippet
 
-snippet fig "Figure environment" b
-\begin{figure}[${1:htpb}]
-	\centering
-	${2:\includegraphics[width=0.8\textwidth]{$3}}
-	\caption{${4:$3}}
-	\label{fig:${5:${3/\W+/-/g}}}
-\end{figure}
-endsnippet
-
-snippet enum "Enumerate" bA
-\begin{enumerate}
-	\item $0
-\end{enumerate}
-endsnippet
-
-snippet item "Itemize" bA
-\begin{itemize}
-	\item $0
-\end{itemize}
-endsnippet
-
-snippet desc "Description" b
-\begin{description}
-	\item[$1] $0
-\end{description}
-endsnippet
-
-snippet pac "Package" b
-\usepackage[${1:options}]{${2:package}}$0
-endsnippet
-
 snippet => "implies" Ai
 \implies
 endsnippet
@@ -469,33 +444,45 @@ snippet iff "iff" wA
 \iff
 endsnippet
 
-# snippet mk "Math" wA
-# $${1}$`!p
-# if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
-# 	snip.rv = ' '
-# else:
-# 	snip.rv = ''
-# `$2
-# endsnippet
+snippet mk "Math" wA
+$${1}$`!p
+if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
+	snip.rv = ' '
+else:
+	snip.rv = ''
+`$2
+endsnippet
 
 context "not math()"
-snippet mk "Math" wA
-<img src="https://www.zhihu.com/equation?tex=" alt="$1" eeimg="1">
+snippet zhihumk "Math" wA
+<img src="https://www.zhihu.com/equation?tex=" alt="$1" eeimg="1"> $0
 endsnippet
 
 context "not math()"
 snippet dm "Math" wA
-<img src="https://www.zhihu.com/equation?tex=" alt="$1\\\\" eeimg="1">
+$$
+${1}
+$$${0}
+endsnippet
+
+context "not math()"
+snippet zhihudm "Math" wA
+<img src="https://www.zhihu.com/equation?tex=" alt="$1\\\\" eeimg="1"> $0
 endsnippet
 
 context "not math()"
 snippet cbt "text with color" w
-<img src="https://www.zhihu.com/equation?tex=" alt="\bbox[#E8F8FF, 4px, border:1px solid gray]{\color{blue}{\texttt{$1}}}" eeimg="1">$0
+$\bbox[#E8F8FF, 4px, border:1px solid gray]{\color{blue}{\texttt{$1}}}$ $0
 endsnippet
 
 context "not math()"
 snippet ct "text with color" w
-<img src="https://www.zhihu.com/equation?tex=" alt="{\color{blue}{\texttt{$1}}}" eeimg="1">$0
+$\color{blue}{\texttt{$1}}}$ $0
+endsnippet
+
+context "not math()"
+snippet rt "text with color" w
+${\color{red}{\small \texttt{$1}}}$ $0
 endsnippet
 
 # snippet dm "Math" wA
@@ -505,26 +492,26 @@ endsnippet
 # endsnippet
 
 snippet ali "Align" bA
-\begin{align*}
+\begin{aligned}
 ${1:`!p
 selectedcode = [x for x in snip.v.text.split("\n") if x]
 for (i, x) in enumerate(selectedcode):
     index = findfirstoperator(x)
     snip.rv += ("" if i == 0 else "    ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
 `}
-\end{align*}
+\end{aligned}
 endsnippet
 
 context "math()"
 snippet bali "Align with {" bA
 \left\{
-\begin{align*}
+\begin{aligned}
 ${1:`!p
 selectedcode = [x for x in snip.v.text.split("\n") if x]
 for (i, x) in enumerate(selectedcode):
     index = findfirstoperator(x)
     snip.rv += ("" if i == 0 else "    ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
-`}\end{align*}
+`}\end{aligned}
 endsnippet
 
 context "math()"
@@ -643,7 +630,10 @@ endsnippet
 post_jump "generate_matrix('p', snip)"
 context "math()"
 snippet "pmat\(([1-9]{1,2}[a-zA-Z]{0,2})\)" "pmat" irw
-`!p snip.rv = match.group(1)`
+`!p
+if not snip.c:
+	snip.rv = match.group(1)
+`
 endsnippet
 
 snippet bmat "bmat" w
@@ -660,8 +650,8 @@ if not snip.c:
 `
 endsnippet
 
-context "math()"
-snippet ( "( )" iA
+context "math() and not back_parentheses()"
+snippet "\(" "( )" irA
 ($1) $0
 endsnippet
 
@@ -756,8 +746,31 @@ snippet rd "to the ... power" iA
 ^{($1)}$0
 endsnippet
 
-snippet __ "subscript" iA
-_{$1}$0
+context "math()"
+snippet "^(.*\b)?(\\?\w+)__" "subscript" wrA
+`!p
+if not snip.c:
+	if match.group(1):
+		snip.rv += match.group(1) + match.group(2)
+	else:
+		snip.rv += match.group(2)
+`_{${1:`!p
+if not snip.c:
+	name = match.group(2)
+	if name[0] == "\\":
+		name = "\\\\" + name[1:]
+	if re.search(name + r"_\{[^{}]+\}", match.group(1)):
+		snip.rv = [x for x in re.finditer(name + r"_\{([^{}]+)\}", match.group(1))][-1].group(1)
+	else:
+		linenumber = int(vim.eval("line('.')"))
+		for index in range(linenumber-1, -1, -1):
+			line = vim.eval("getline(%d)" % index)
+			if re.search(name + r"_\{[^{}]+\}", line):
+				snip.rv = [x for x in re.finditer(name + r"_\{([^{}]+)\}", line)][-1].group(1)
+				break
+		else:
+			snip.rv = ""
+`}}$0
 endsnippet
 
 snippet ooo "\infty" iA
@@ -907,6 +920,12 @@ snippet xx "cross" iA
 \times 
 endsnippet
 
+context "not math()"
+snippet "(?<!\*)\*" "bold" ir
+**$1**$0
+endsnippet
+
+context "math()"
 priority 100
 snippet ** "star" iA
 ^{*}
@@ -1084,14 +1103,14 @@ endsnippet
 context "math()"
 snippet "(?<=\s)case" "cases" wrA
 \begin{cases}
-	$1 & $2\\
-	$3 & $4\\
+	$1 & $2\\\\
+	$3 & $4\\\\
 \end{cases}
 endsnippet
 
 context "math()"
-snippet if "if" wA
-\mbox{if }
+snippet if "if" w
+\text{if }
 endsnippet
 
 snippet SI "SI" iA
@@ -1099,26 +1118,32 @@ snippet SI "SI" iA
 endsnippet
 
 snippet bigfun "Big function" iA
-<img src="https://www.zhihu.com/equation?tex=" alt="\begin{align}
+$$
+\begin{aligned}
 	$1\colon $2 &\longrightarrow $3 \\\\
-	$4 &\longmapsto $1(${4/[\(\)]//g}) = $0
-\end{align}\\\\" eeimg="1">
+	$4 &\longmapsto $1(${4/[\(\)]//g}) = $0\\\\
+\end{aligned}
+$$
 endsnippet
 
-snippet bigopt "Optimization problem" iA
-<img src="https://www.zhihu.com/equation?tex=" alt="\begin{align}
+snippet bigopt "Optimization problem" w
+$$
+\begin{aligned}
 	\min &\quad ${1:f(x)}\\\\
 	\text{s.t.} &\quad ${2:g(x)} \leq 0\\\\
 				&\quad ${3:h(x)} = 0\\\\
-\end{align}\\\\" eeimg="1">
+\end{aligned}
+$$
 endsnippet
 
-snippet bigmax "Optimization problem" iA
-<img src="https://www.zhihu.com/equation?tex=" alt="\begin{align}
+snippet bigmax "Optimization problem" w
+$$
+\begin{aligned}
 	\max &\quad ${1:f(x)}\\\\
 	\text{s.t.} &\quad ${2:g(x)} \leq 0\\\\
 				&\quad ${3:h(x)} = 0\\\\
-\end{align}\\\\" eeimg="1">
+\end{aligned}
+$$
 endsnippet
 
 snippet dfun "Definition of function" iA
@@ -1136,12 +1161,6 @@ snippet "(\\?[a-zA-Z]\w*)bar" "bar" riA
 \overline{`!p snip.rv=match.group(1)`}
 endsnippet
 
-# priority 10
-# context "math()"
-# snippet "hat" "hat" riA
-# \hat{$1}$0
-# endsnippet
-
 priority 100
 context "math()"
 snippet "(\\?[a-zA-Z]\w*)hat" "hat" riA
@@ -1151,10 +1170,6 @@ endsnippet
 snippet "(\\?[a-zA-Z]\w*)(,,)" "Vector postfix" riA
 \vec{`!p snip.rv=match.group(1)`}
 endsnippet
-
-# snippet letw "let omega" iA
-# Let $\Omega \subset \C$ be open.
-# endsnippet
 
 context "math()"
 snippet HH "H" iA

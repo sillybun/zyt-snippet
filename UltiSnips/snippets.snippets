@@ -1,3 +1,24 @@
+global !p
+import re
+
+def add_placeholder(snip):
+    if snip.snippet_start[0] == snip.snippet_end[0]:
+        start_col = snip.snippet_start[1]
+        end_col = snip.snippet_end[1]
+        line = snip.buffer[snip.line]
+        info = line[start_col:end_col]
+        left = line[0:start_col]
+        right = line[end_col:]
+        # print("###%s###, ###%s###, ###%s###" % (left, info, right))
+        left = re.sub(r"(?!<\\)\$", r"\$", left)
+        left = re.sub(r"(?!<\\)\.", r"\.", left)
+        right = re.sub(r"(?!<\\)\$", r"\$", right)
+        # print("###%s###, ###%s###, ###%s###" % (left, info, right))
+        snip.buffer[snip.line] = ''
+        snip.expand_anon(left + info + right)
+endglobal
+
+
 snippet snip "create snip" b
 snippet $1 "${2:snippet}" $3
 $4
@@ -24,8 +45,17 @@ endsnippet
 
 snippet "@@(\((\d+)\))?" "match.group" wr
 match.group(${1:`!p
-snip.rv = match.group(2)
+if not snip.c:
+    if match.group(1):
+        snip.rv = match.group(2)
+    else:
+        snip.rv = "1"
 `})$0
+endsnippet
+
+post_jump "add_placeholder(snip)"
+snippet test "test" w
+this is a test
 endsnippet
 
 # vim:ft=basicsnippets
