@@ -607,8 +607,32 @@ snippet rd "to the ... power" iA
 ^{($1)}$0
 endsnippet
 
-snippet __ "subscript" iA
-_{$1}$0
+
+context "math()"
+snippet "^(.*\b)?(\\?\w+)__" "subscript" wrA
+`!p
+if not snip.c:
+	if match.group(1):
+		snip.rv += match.group(1) + match.group(2)
+	else:
+		snip.rv += match.group(2)
+`_{${1:`!p
+if not snip.c:
+	name = match.group(2)
+	if name[0] == "\\":
+		name = "\\\\" + name[1:]
+	if re.search(name + r"_\{[^{}]+\}", match.group(1)):
+		snip.rv = [x for x in re.finditer(name + r"_\{([^{}]+)\}", match.group(1))][-1].group(1)
+	else:
+		linenumber = int(vim.eval("line('.')"))
+		for index in range(linenumber-1, -1, -1):
+			line = vim.eval("getline(%d)" % index)
+			if re.search(name + r"_\{[^{}]+\}", line):
+				snip.rv = [x for x in re.finditer(name + r"_\{([^{}]+)\}", line)][-1].group(1)
+				break
+		else:
+			snip.rv = ""
+`}}$0
 endsnippet
 
 snippet ooo "\infty" iA
