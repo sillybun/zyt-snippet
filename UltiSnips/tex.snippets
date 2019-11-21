@@ -511,10 +511,10 @@ if not snip.c:
 `
 endsnippet
 
-context "math()"
-snippet ( "( )" iA
-($1) $0
-endsnippet
+# context "math()"
+# snippet ( "( )" iA
+# ($1) $0
+# endsnippet
 
 snippet lrp "left( right)" iA
 \left( ${1:${VISUAL}} \right) $0
@@ -799,7 +799,7 @@ endsnippet
 
 priority 100
 context "math()"
-snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv)' "ln" rwA
+snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv|sup|inf|max|min)' "ln" rwA
 \\`!p snip.rv = match.group(1)`
 endsnippet
 

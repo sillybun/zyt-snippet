@@ -15,7 +15,10 @@ from pythonutil import *
 
 def back_parentheses():
 	right = vim.eval("getline('.')[col('.')-1:]")
-	return right.lstrip().startswith(")")
+	left = vim.eval("getline('.')[:col('.')-2]")
+	# print("left: ##%s##" % left)
+	# print("right: ##%s##" % right)
+	return right.lstrip().startswith(")") and left.count("(")-1 < right.count(")")
 
 def math():
 	if vim_left_last_p1_not_p2(r"https://www.zhihu.com/equation\?tex=\" alt=\"", r"eeimg=\"") and vim_right_first_p1_not_p2(r"eeimg=\"", r"https://www.zhihu.com/equation\?tex=\" alt=\""):
@@ -283,15 +286,6 @@ def findmatched_parentheses(line, lindex):
 			if depth == 0:
 				return index
 	return -1
-
-def add_placeholder(snip):
-	"""
-	just one line
-	"""
-	# info = snip.buffer[snip.line]
-	# snip.buffer[snip.line] = ''
-	# snip.expand_anon(info)
-		
 
 def add_package(packagename):
 	if packagename == "pgfplots" and vim.eval("search('\\\\usepackage{pgfplots}', 'n')") == '0':
@@ -1271,33 +1265,33 @@ snip.rv = symbol_list[(index + 1) % len(symbol_list)]
 `
 endsnippet
 
-post_jump "add_placeholder(snip)"
-context "environment(lastemptyline = True)"
-snippet "^(\s+)" "auto insert something" wr
-`!p
-snip.rv = match.group(1)
-env_name = environment()
-line_number = int(vim.eval("line('.')"))
-last_line = vim.eval("getline(%d)" % (line_number-1))
-if any(env_name.startswith(x) for x in ["ali", "split"]):
-	try:
-		last_operator = extract_operator(re.fullmatch(r"[^&]*&(.*)", last_line).group(1))
-	except:
-		last_operator = ""
-	if last_line.split("&")[0].strip():
-		snip.rv += "$2 & ${1:%s} $3 \\\\\\\\" % last_operator
-	else:
-		snip.rv += "& ${1:%s} $3 \\\\\\\\" % last_operator
-elif re.search("matrix", env_name):
-	number = last_line.count("&") + 1
-	snip.rv += " & ".join("$%d" % x for x in range(1, number+1)) + "\\" * 4
-elif env_name == "enumerate":
-	snip.rv = " " * (len(last_line) - len(last_line.lstrip())) + "\item $1"
-`
-endsnippet
+# post_jump "add_placeholder(snip)"
+# context "environment(lastemptyline = True)"
+# snippet "^(\s+)" "auto insert something" wr
+# `!p
+# snip.rv = match.group(1)
+# env_name = environment()
+# line_number = int(vim.eval("line('.')"))
+# last_line = vim.eval("getline(%d)" % (line_number-1))
+# if any(env_name.startswith(x) for x in ["ali", "split"]):
+# 	try:
+# 		last_operator = extract_operator(re.fullmatch(r"[^&]*&(.*)", last_line).group(1))
+# 	except:
+# 		last_operator = ""
+# 	if last_line.split("&")[0].strip():
+# 		snip.rv += "$2 & ${1:%s} $3 \\\\\\\\" % last_operator
+# 	else:
+# 		snip.rv += "& ${1:%s} $3 \\\\\\\\" % last_operator
+# elif re.search("matrix", env_name):
+# 	number = last_line.count("&") + 1
+# 	snip.rv += " & ".join("$%d" % x for x in range(1, number+1)) + "\\" * 4
+# elif env_name == "enumerate":
+# 	snip.rv = " " * (len(last_line) - len(last_line.lstrip())) + "\item $1"
+# `
+# endsnippet
 
 context "math()"
-snippet "^.*(\\right\s*[\)\]]|\S(?<!\\right)\s*[\)\]])" "snippet" wr
+snippet "^.*(\\right\s*[\)\]]|\S(?<!\\right)\s*[\)\]])" "change type of parentheses: ( to \left(" wr
 `!p
 line = match.string
 left_parentheses = findmatched_parentheses(line, len(line) - 1)

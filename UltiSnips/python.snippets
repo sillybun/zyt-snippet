@@ -415,6 +415,15 @@ else:
 `'epoch [{}/{}], step [{}/{}], loss: {:.4f}'.format($1, $2, $3, $4, $5)$0
 endsnippet
 
+snippet "(print|log)\(error\)" "print loss" wr
+`!p
+if match.group(1) == "print":
+	snip.rv += "print("
+else:
+	snip.rv += "logging.error("
+`'line [`!p snip.rv = vim.eval("line('.')")`], ERROR: $1')$0
+endsnippet
+
 context "has_package('torch')"
 snippet class(nn) "class template for Neural Network" b
 class $1(nn.Module):
