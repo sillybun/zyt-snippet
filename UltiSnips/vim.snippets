@@ -1,0 +1,18 @@
+snippet func "Snip template" b
+function ${1:FUNC NAME}(${2:Args}) abort
+endfunction
+endsnippet
+
+snippet pyfunc "Snip template" b
+function ${1:FUNC NAME}(${2:}) abort
+if has("python3")
+python << EOF
+import vim
+`!p
+arg_list = [x.strip() for x in t[2].split(",") if x.strip()]
+for arg in arg_list:
+	snip.rv += "%s = vim.eval('a:%s')\n" % (arg, arg)
+`EOF
+endif
+endfunction
+endsnippet
