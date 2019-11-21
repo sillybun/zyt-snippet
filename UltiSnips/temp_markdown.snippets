@@ -359,6 +359,59 @@ snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
 	snip.expand_anon(displayed)
 endglobal
 
+snippet template "Basic template" b
+%!TeX program = xelatex
+
+\documentclass{article}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+\usepackage{amsmath}
+\usepackage{mathrsfs} 
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{listings}
+
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\geometry{left = 3cm, right = 3cm, top = 3cm, bottom = 3cm}
+
+\begin{document}
+	$0
+\end{document}
+endsnippet
+
+# context "math()"
+# snippet '"' "test" ri
+# "test
+# endsnippet
+
+# snippet "^(.*)test" "test" wr
+# `!p snip.rv = match.group(1)`_`!p snip.rv = "one"`
+# endsnippet
+
 snippet beg "begin{} / end{}" bA
 \\begin{$1}
 	$0
@@ -366,9 +419,19 @@ snippet beg "begin{} / end{}" bA
 endsnippet
 
 priority 100
-context "math()"
 snippet ... "ldots" iA
 \ldots 
+endsnippet
+
+snippet table "Table environment" b
+\begin{table}[${1:htpb}]
+	\centering
+	\caption{${2:caption}}
+	\label{tab:${3:label}}
+	\begin{tabular}{${5:c}}
+	$0${5/((?<=.)c|l|r)|./(?1: & )/g}
+	\end{tabular}
+\end{table}
 endsnippet
 
 snippet => "implies" Ai
@@ -379,6 +442,10 @@ snippet =< "implied by" Ai
 \impliedby
 endsnippet
 
+context "math()"
+snippet iff "iff" wA
+\iff
+endsnippet
 
 snippet mk "Math" wA
 $${1}$`!p
@@ -420,6 +487,12 @@ context "not math()"
 snippet rt "text with color" w
 ${\color{red}{\small \texttt{$1}}}$ $0
 endsnippet
+
+# snippet dm "Math" wA
+# $$
+# ${1}
+# $$$0
+# endsnippet
 
 snippet ali "Align" bA
 \begin{aligned}
@@ -502,7 +575,39 @@ snippet '([A-Za-z])_(\d\d)' "auto subscript2" wrA
 `!p snip.rv = match.group(1)`_{`!p snip.rv = match.group(2)`}
 endsnippet
 
-snippet == "equals" iw
+
+snippet sympy "sympyblock " w
+sympy $1 sympy$0
+endsnippet
+
+priority 10000
+snippet 'sympy(.*)sympy' "sympy" wr
+`!p
+from sympy import *
+x, y, z, t = symbols('x y z t')
+k, m, n = symbols('k m n', integer=True)
+f, g, h = symbols('f g h', cls=Function)
+init_printing()
+snip.rv = eval('latex(' + match.group(1).replace('\\', '').replace('^', '**').replace('{', '(').replace('}', ')') + ')')
+`
+endsnippet
+
+priority 1000
+snippet math "mathematicablock" w
+math $1 math$0
+endsnippet
+
+priority 10000
+snippet 'math(.*)math' "math" wr
+`!p
+import subprocess
+code = match.group(1)
+code = 'ToString[' + code + ', TeXForm]'
+snip.rv = subprocess.check_output(['wolframscript', '-code', code])
+`
+endsnippet
+
+snippet == "equals" iA
 &= $1 \\\\
 endsnippet
 
@@ -520,24 +625,24 @@ snippet floor "floor" iA
 \left\lfloor $1 \right\rfloor$0
 endsnippet
 
-# snippet pmat "pmat" w
-# context "math()"
-# \begin{pmatrix} $1 \end{pmatrix} $0
-# endsnippet
+snippet pmat "pmat" w
+context "math()"
+\begin{pmatrix} $1 \end{pmatrix} $0
+endsnippet
 
-# post_jump "generate_matrix('p', snip)"
-# context "math()"
-# snippet "pmat\(([1-9]{1,2}[a-zA-Z]{0,2})\)" "pmat" irw
-# `!p
-# if not snip.c:
-# 	snip.rv = match.group(1)
-# `
-# endsnippet
+post_jump "generate_matrix('p', snip)"
+context "math()"
+snippet "pmat\(([1-9]{1,2}[a-zA-Z]{0,2})\)" "pmat" irw
+`!p
+if not snip.c:
+	snip.rv = match.group(1)
+`
+endsnippet
 
-# snippet bmat "bmat" w
-# context "math()"
-# \begin{bmatrix} $1 \end{bmatrix} $0
-# endsnippet
+snippet bmat "bmat" w
+context "math()"
+\begin{bmatrix} $1 \end{bmatrix} $0
+endsnippet
 
 post_jump "generate_matrix('b', snip)"
 context "math()"
@@ -548,10 +653,10 @@ if not snip.c:
 `
 endsnippet
 
-# context "math() and not back_parentheses()"
-# snippet "\(" "( )" irA
-# ($1)$0
-# endsnippet
+context "math() and not back_parentheses()"
+snippet "\(" "( )" irA
+($1)$0
+endsnippet
 
 snippet lrp "left( right)" iA
 \left( ${1:${VISUAL}} \right) $0
@@ -911,12 +1016,12 @@ snippet !> "mapsto" iA
 endsnippet
 
 context "math()"
-snippet inv "inverse" iA
+snippet invs "inverse" iA
 ^{-1}
 endsnippet
 
 context "math()"
-snippet pri "prime" i
+snippet ' "prime" iA
 ^\prime
 endsnippet
 

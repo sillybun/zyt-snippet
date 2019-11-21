@@ -59,4 +59,8 @@ $4
 `!p snip.rv = "endsnippet"`$0
 endsnippet
 
+snippet print(info) "print information" b
+print("line [`!p snip.rv = vim.eval("line('.')")`] $1: ###%s###" % $1)$0
+endsnippet
+
 # vim:ft=basicsnippets
