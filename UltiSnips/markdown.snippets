@@ -36,9 +36,11 @@ def math():
 
 def vim_left_paragraph():
 	currentlinenumber = int(vim.eval("line('.')"))
-	currentline = vim.eval("getline('.')")
-	currentcol = int(vim.eval("col('.')"))
-	left = currentline[0:currentcol-1]
+	# currentline = vim.eval("getline('.')")
+	# currentcol = int(vim.eval("col('.')"))
+	# left = currentline[0:currentcol-1]
+	left = vim.eval("getline('.')[0:col('.')-2]")
+	# print("left: ##%s##" % left)
 	lp = [left]
 	# lp.append(left)
 	for index in range(currentlinenumber-1, -1, -1):
@@ -50,9 +52,11 @@ def vim_left_paragraph():
 
 def vim_right_paragraph():
 	currentlinenumber = int(vim.eval("line('.')"))
-	currentline = vim.eval("getline('.')")
-	currentcol = int(vim.eval("col('.')"))
-	right = currentline[currentcol-1:]
+	# currentline = vim.eval("getline('.')")
+	# currentcol = int(vim.eval("col('.')"))
+	# right = currentline[currentcol-1:]
+	right = vim.eval("getline('.')[col('.')-1:]")
+	# print("right: ##%s##" % right)
 	rp = [right]
 	for index in range(currentlinenumber+1, int(vim.eval("line('$')")) + 1):
 		tline = vim.eval("getline(%d)" % index)
@@ -652,7 +656,7 @@ endsnippet
 
 context "math() and not back_parentheses()"
 snippet "\(" "( )" irA
-($1) $0
+($1)$0
 endsnippet
 
 snippet lrp "left( right)" iA
@@ -943,7 +947,7 @@ endsnippet
 
 priority 100
 context "math()"
-snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv)' "ln" rwA
+snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv|sup|inf|max|min)' "ln" rwA
 \\`!p snip.rv = match.group(1)`
 endsnippet
 

@@ -58,4 +58,10 @@ snippet test "test" w
 this is a test
 endsnippet
 
+snippet snip "Snip template" b
+`!p snip.rv = "snippet"` ${1:Tab_trigger} "${2:Description}" ${3:w}
+$4
+`!p snip.rv = "endsnippet"`$0
+endsnippet
+
 # vim:ft=basicsnippets
