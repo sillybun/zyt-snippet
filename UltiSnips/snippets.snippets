@@ -63,4 +63,16 @@ snippet print(info) "print information" b
 print("line [`!p snip.rv = vim.eval("line('.')")`] $1: ###%s###" % $1)$0
 endsnippet
 
+snippet currentlr "current line number" w
+int(vim.eval("line('.')"))
+endsnippet
+
+snippet contentleft "current line number" w
+vim.eval("getline('.')[:col('.')-2]")
+endsnippet
+
+snippet contentright "current line number" w
+vim.eval("getline('.')[col('.')-1:]")
+endsnippet
+
 # vim:ft=basicsnippets
