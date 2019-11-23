@@ -39,13 +39,8 @@ def math():
 
 def vim_left_paragraph():
 	currentlinenumber = int(vim.eval("line('.')"))
-	# currentline = vim.eval("getline('.')")
-	# currentcol = int(vim.eval("col('.')"))
-	# left = currentline[0:currentcol-1]
 	left = vim.eval("getline('.')[0:col('.')-2]")
-	# print("left: ##%s##" % left)
 	lp = [left]
-	# lp.append(left)
 	for index in range(currentlinenumber-1, -1, -1):
 		tline = vim.eval("getline(%d)" % index)
 		if not tline.strip():
@@ -53,13 +48,17 @@ def vim_left_paragraph():
 		lp = [tline] + lp
 	return lp
 
+def vim_left_all(max_line = 100, offset = 0):
+	left = vim.eval("getline('.')[:col('.')-2+(%d)]" % offset)
+	content = [left]
+	currentlinenumber = int(vim.eval("line('.')"))
+	for index in range(currentlinenumber-1, max(0, currentlinenumber - max_line) if max_line > 0 else -1, -1):
+		content.append(vim.eval('getline(%d)' % index))
+	return content
+
 def vim_right_paragraph():
 	currentlinenumber = int(vim.eval("line('.')"))
-	# currentline = vim.eval("getline('.')")
-	# currentcol = int(vim.eval("col('.')"))
-	# right = currentline[currentcol-1:]
 	right = vim.eval("getline('.')[col('.')-1:]")
-	# print("right: ##%s##" % right)
 	rp = [right]
 	for index in range(currentlinenumber+1, int(vim.eval("line('$')")) + 1):
 		tline = vim.eval("getline(%d)" % index)
@@ -355,7 +354,7 @@ snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
 				index += 1
 			displayed += "\n"
 	displayed += " " * len(linfo) + "\\end{%cmatrix}$0" % prefix + (" " + sub(r"\\", r"\\\\", rinfo) if rinfo else "")
-	print("line [358] displayed: ###%s###" % displayed)
+	# print("line [357] displayed: ###%s###" % displayed)
 	snip.expand_anon(displayed)
 endglobal
 
@@ -378,6 +377,7 @@ endsnippet
 snippet =< "implied by" Ai
 \impliedby
 endsnippet
+
 
 
 snippet mk "Math" wA
@@ -551,12 +551,8 @@ endsnippet
 context "math()"
 snippet "(?<=\()@" "copy in parathesis" wr
 $1`!p
-left = vim.eval("getline('.')[:col('.')-2]")
-content = [left]
-currentlinenumber = int(vim.eval("line('.')"))
-for index in range(currentlinenumber-1, max(0, currentlinenumber - 100), -1):
-	content.append(vim.eval('getline(%d)' % index))
-candidate = sum([re.findall(r"(?<=\()[^()]+(?=\))", x)[::-1] for x in content], [])
+content = vim_left_all(100)
+eandidate = sum([re.findall(r"(?<=\()[^()]+(?=\))", x)[::-1] for x in content], [])
 candidate = list(dict.fromkeys(candidate))
 candidate = [x[len(t[1]):] for x in candidate if x.startswith(t[1]) and len(t[1]) < len(x)]
 if len(candidate) == 1:
@@ -568,18 +564,9 @@ else:
 `$0
 endsnippet
 
-# context "math()"
-# snippet "\(" "( )" irA
-# ($1)$0
-# endsnippet
-
 snippet lrp "left( right)" iA
 \left( ${1:${VISUAL}} \right) $0
 endsnippet
-
-# snippet lr( "left( right)" i
-# \left( ${1:${VISUAL}} \right) $0
-# endsnippet
 
 snippet lr| "left| right|" i
 \left| ${1:${VISUAL}} \right| $0
@@ -664,66 +651,64 @@ snippet rd "to the ... power" iA
 ^{($1)}$0
 endsnippet
 
-context "math()"
-snippet "^(.*\b)?(\\?\w+)__" "subscript" wrA
+# context "{'number': 0}"
+# snippet test "test" w
+# $1 AND `!p
+# print(snip.context['number'])
+# if t[1]:
+# 	snip.rv = int(t[1]) + 1
+# 	snip.context['number'] = snip.context['number'] + 1
+# `
+# endsnippet
+
+context "math() and {'works': 0}"
+snippet "^(.*)(\\\w+|(?<![\w\\])\w+)__" "subscript" wrA
 `!p
 if not snip.c:
-	if match.group(1):
-		snip.rv += match.group(1) + match.group(2)
-	else:
-		snip.rv += match.group(2)
-	# print("snip.rv: ###%s###" % snip.rv)
-`_{${1:`!p
-if not snip.c:
-	name = match.group(2)
-	if name[0] == "\\":
-		name = "\\\\" + name[1:]
-	if re.search(name + r"_\{", match.group(1)):
-		start_col = [x for x in re.finditer(name + r"_\{", match.group(1))][-1].span()[1]
-		remain = match.group(1)[start_col:]
-		# print("line [764] remain: ###%s###" % remain)
-		# print("match.group(1): ###%s###" % match.group(1))
-		# print("start_col: ##%d##" % start_col)
-		# print("start_remain: ##%s##" % remain)
-		depth = 1
-		index = 0
-		while index < len(remain):
-			if re.fullmatch("\}", remain[index]):
-				depth -= 1
-			if re.fullmatch("\{", remain[index]):
-				depth += 1
-			if depth == 0:
-				break
-			if remain[index] == "\\":
-				index += 2
-			else:
-				index += 1
-		snip.rv = remain[:index]
-	else:
-		linenumber = int(vim.eval("line('.')"))
-		for index in range(linenumber-1, -1, -1):
-			line = vim.eval("getline(%d)" % index)
-			if re.search(name + r"_\{", line):
-				start_col = [x for x in re.finditer(name + r"_\{", line)][-1].span()[1]
-				remain = line[start_col:]
-				depth = 1
-				index = 0
-				while index < len(remain):
-					if re.fullmatch("\}", remain[index]):
-						depth -= 1
-					if re.fullmatch("\{", remain[index]):
-						depth += 1
-					if depth == 0:
-						break
-					if remain[index] == "\\":
-						index += 2
-					else:
-						index += 1
-				snip.rv = remain[:index]
-				break
+	snip.rv = match.group(1) + match.group(2)
+`_{$1`!p
+# print("line [670] match.group(1): ###%s###" % match.group(1))
+# print("line [671] match.group(2): ###%s###" % match.group(2))
+# print("line [672] int(vim.eval(\"col('.')\")) - len(match.group(1)) - len(match.group(2)) - len(t[1]): ###%s###" % (int(vim.eval("col('.')")) - len(match.group(1)) - len(match.group(2)) - len(t[1])))
+# print("^^^^^^^^^^^^^^^^^^^^^^^^^^")
+# print("line [674] snip.context['works']: ###%s###" % snip.context['works'])
+# print("line [675] vim.eval(\"col('.')\"): ###%s###" % vim.eval("col('.')"))
+if snip.context['works'] == 0:
+	if int(vim.eval("col('.')")) - len(match.group(1)) - len(match.group(2)) - len(t[1]) == 3:
+		name = match.group(2)
+		if name[0] == "\\":
+			name = "\\\\" + name[1:]
+		# content = vim_left_all(max_line=100, offset = -(len(name) + len(t[1])))
+		content = [match.group(1)]
+		currentlinenumber = int(vim.eval("line('.')"))
+		max_line = 100
+		for index in range(currentlinenumber-1, max(0, currentlinenumber - max_line) if max_line > 0 else -1, -1):
+			content.append(vim.eval('getline(%d)' % index))
+		# print("line [671] t[1]: ###%s###" % t[1])
+		# print("line [672] vim.eval(\"getline('.')\"): ###%s###" % vim.eval("getline('.')"))
+		# print("line [673] content: ###%s###" % content)
+		# print("line [674] vim.eval(\"col('.')\"): ###%s###" % vim.eval("col('.')"))
+		candidate = sum([[t[0] for t in re.findall("(?<=" + name  + r"_\{)(([^\{\}]+|\{[^\{\}]+\})+)(?=\})", x)][::-1] for x in content], [])
+		candidate = list(dict.fromkeys(candidate))
+		# print("line [677] candidate: ###%s###" % candidate)
+		candidate = [x[len(t[1]):] for x in candidate if x.startswith(t[1]) and len(t[1]) < len(x)]
+		# print("line [679] candidate: ###%s###" % candidate)
+		if candidate:
+			snip.rv = candidate[0]
 		else:
 			snip.rv = ""
-`}}$0
+		# print("line [704] vim.eval(\"col('.')\"): ###%s###" % vim.eval("col('.')"))
+	elif int(vim.eval("col('.')")) - len(match.group(1)) - len(match.group(2)) - len(t[1]) > 3:
+		snip.context['works'] = snip.context['works'] + 1
+		# print("line [686] vim.eval(\"getline('.')\"): ###%s###" % vim.eval("getline('.')"))
+		# print("line [687] vim.eval(\"col('.')\"): ###%s###" % vim.eval("col('.')"))
+		# print("line [688] match.group(1): ###%s###" % match.group(1))
+		# print("line [689] match.group(2): ###%s###" % match.group(2))
+		# print("line [691] gap: ###%s###" % (int(vim.eval("col('.')")) - len(match.group(1)) - len(match.group(2)) - len(t[1])))
+		# print("line [684] snip.rv: ###%s###" % snip.rv)
+else:
+	snip.context['works'] = snip.context['works'] + 1
+`}$0
 endsnippet
 
 snippet ooo "\infty" iA

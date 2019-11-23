@@ -60,7 +60,7 @@ $4
 endsnippet
 
 snippet print(info) "print information" b
-print("line [`!p snip.rv = vim.eval("line('.')")`] $1: ###%s###" % $1)$0
+print("line [`!p if not snip.c: snip.rv = vim.eval("line('.')")`] $1: ###%s###" % $1)$0
 endsnippet
 
 snippet currentlr "current line number" w

@@ -4,9 +4,13 @@ endfunction
 endsnippet
 
 snippet pyfunc "Snip template" b
-function ${1:FUNC NAME}(${2:}) abort
+function `!p
+if not snip.c:
+	if vim.eval("expand('%:p:h')").split("/")[-1] == "autoload":
+		snip.rv = fn[:-4] + "#"
+`${1:FUNC NAME}(${2:}) abort
 if has("python3")
-python << EOF
+python3 << EOF
 import vim
 `!p
 arg_list = [x.strip() for x in t[2].split(",") if x.strip()]
@@ -15,4 +19,8 @@ for arg in arg_list:
 `EOF
 endif
 endfunction
+endsnippet
+
+snippet command "command" b
+command! ${1:COMMANDNAME} call ${2:FUNCNAME}()
 endsnippet
