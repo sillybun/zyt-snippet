@@ -1,6 +1,11 @@
 snippet func "Snip template" b
-function ${1:FUNC NAME}(${2:Args}) abort
-endfunction
+function `!p
+if not snip.c:
+	if vim.eval("expand('%:p:h')").split("/")[-1] == "autoload":
+		snip.rv = fn[:-4] + "#"
+`${1:FUNC NAME}(${2:Args}) abort
+$3
+endfunction$0
 endsnippet
 
 snippet pyfunc "Snip template" b
@@ -16,11 +21,18 @@ import vim
 arg_list = [x.strip() for x in t[2].split(",") if x.strip()]
 for arg in arg_list:
 	snip.rv += "%s = vim.eval('a:%s')\n" % (arg, arg)
-`EOF
+`$3
+EOF
 endif
-endfunction
+endfunction$0
 endsnippet
 
 snippet command "command" b
-command! ${1:COMMANDNAME} call ${2:FUNCNAME}()
+command! ${1:COMMANDNAME} call ${2:FUNCNAME}()$0
+endsnippet
+
+snippet if "if statement" bA
+if $1
+	$2
+endif$0
 endsnippet
