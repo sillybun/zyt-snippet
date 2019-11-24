@@ -622,7 +622,7 @@ snippet diff "d/dx" w
 endsnippet
 
 context "math()"
-snippet sq "\sqrt{}" iA
+snippet "(?<!\\)sq" "\sqrt{}" iAr
 \sqrt{${1:${VISUAL}}} $0
 endsnippet
 
@@ -650,16 +650,6 @@ context "math()"
 snippet rd "to the ... power" iA
 ^{($1)}$0
 endsnippet
-
-# context "{'number': 0}"
-# snippet test "test" w
-# $1 AND `!p
-# print(snip.context['number'])
-# if t[1]:
-# 	snip.rv = int(t[1]) + 1
-# 	snip.context['number'] = snip.context['number'] + 1
-# `
-# endsnippet
 
 context "math() and {'works': 0}"
 snippet "^(.*)(\\\w+|(?<![\w\\])\w+)__" "subscript" wrA
@@ -807,22 +797,22 @@ snippet R0+ "R0+" iA
 \\R_0^+
 endsnippet
 
-snippet plot "Plot" w
-\begin{figure}[$1]
-	\centering
-	\begin{tikzpicture}
-		\begin{axis}[
-			xmin= ${2:-10}, xmax= ${3:10},
-			ymin= ${4:-10}, ymax = ${5:10},
-			axis lines = middle,
-		]
-			\addplot[domain=$2:$3, samples=${6:100}]{$7};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{$8}
-	\label{${9:$8}}
-\end{figure}
-endsnippet
+# snippet plot "Plot" w
+# \begin{figure}[$1]
+# 	\centering
+# 	\begin{tikzpicture}
+# 		\begin{axis}[
+# 			xmin= ${2:-10}, xmax= ${3:10},
+# 			ymin= ${4:-10}, ymax = ${5:10},
+# 			axis lines = middle,
+# 		]
+# 			\addplot[domain=$2:$3, samples=${6:100}]{$7};
+# 		\end{axis}
+# 	\end{tikzpicture}
+# 	\caption{$8}
+# 	\label{${9:$8}}
+# \end{figure}
+# endsnippet
 
 snippet nn "Tikz node" w
 \node[$5] (${1/[^0-9a-zA-Z]//g}${2}) ${3:at (${4:0,0}) }{$${1}$};
@@ -830,13 +820,18 @@ $0
 endsnippet
 
 context "math()"
-snippet mcal "mathcal" ia
+snippet mcal "mathcal" iA
 \mathcal{$1}$0
 endsnippet
 
 context "math()"
-snippet mbb "mathbb" ia
+snippet mbb "mathbb" iA
 \mathbb{$1}$0
+endsnippet
+
+context "math()"
+snippet mbf "mathbb" iA
+\mathbf{$1}$0
 endsnippet
 
 context "math()"
@@ -881,8 +876,13 @@ endsnippet
 
 priority 100
 context "math()"
-snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv|sup|inf|max|min)' "ln" rwA
+snippet '(?<![\\a-zA-Z])(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv|sup|inf|max|min)' "ln" rwA
 \\`!p snip.rv = match.group(1)`
+endsnippet
+
+context "math()"
+snippet "(?<![\\a-zA-Z])arg(max|min)" "argmin" wrA
+\mathop{\arg\\`!p snip.rv = match.group(1)`}
 endsnippet
 
 priority 300
@@ -950,7 +950,7 @@ endsnippet
 
 context "math()"
 snippet set "set" wA
-\\{${1:$VISUAL}}\\\\} $0
+\\{${1:`!p if snip.v: snip.rv = snip.v.text`}\\} $0
 endsnippet
 
 snippet || "mid" iA
@@ -972,50 +972,62 @@ snippet inn "in " iA
 \in 
 endsnippet
 
-snippet NN "n" iA
+context "math()"
+snippet NN "n" wA
 \mathbb{N}
 endsnippet
 
+context "math()"
 snippet Nn "cap" iA
 \cap 
 endsnippet
 
+context "math()"
 snippet UU "cup" iA
 \cup 
 endsnippet
 
+context "math()"
 snippet uuu "bigcup" iA
 \bigcup_{${1:i \in ${2: I}}} $0
 endsnippet
 
+context "math()"
 snippet nnn "bigcap" iA
 \bigcap_{${1:i \in ${2: I}}} $0
 endsnippet
 
+context "math()"
 snippet OO "emptyset" iA
 \O
 endsnippet
 
+context "math()"
 snippet RR "real" iA
 \mathbb{R}
 endsnippet
 
+context "math()"
 snippet PP "Probability" wA
 \mathbb{P}
 endsnippet
 
+context "math()"
 snippet QQ "Q" iA
 \mathbb{Q}
 endsnippet
 
+context "math()"
 snippet ZZ "Z" iA
 \mathbb{Z}
 endsnippet
 
+context "math()"
 snippet <! "normal" iA
 \triangleleft 
 endsnippet
 
+context "math()"
 snippet <> "hokje" iA
 \diamond 
 endsnippet
@@ -1103,6 +1115,12 @@ priority 100
 context "math()"
 snippet "(\\?[a-zA-Z]\w*)hat" "hat" riA
 \hat{`!p snip.rv=match.group(1)`}
+endsnippet
+
+priority 100
+context "math()"
+snippet "(\\?[a-zA-Z]\w*)bf" "hat" riA
+\mathbf{`!p snip.rv=match.group(1)`}
 endsnippet
 
 snippet "(\\?[a-zA-Z]\w*)(,,)" "Vector postfix" riA
@@ -1245,5 +1263,6 @@ else:
 	snip.rv += line[:left_parentheses].rstrip()[:-5] + "[" + line[left_parentheses+1:-1].rstrip()[:-6] + "]"
 `
 endsnippet
+
 
 # vim:ft=snippets

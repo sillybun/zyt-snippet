@@ -145,6 +145,17 @@ def head_writer(head_check, head_content, location="import", last = False, bias 
 	if vim.eval("search('%s', 'n')" % head_check) == "0":
 		loc = int(vim.eval("search('%s', 'n')" % location if not last else "search('%s', 'nb')" % location))
 		snip.buffer[max(loc+bias, 0):max(loc+bias, 0)] = head_content
+
+def complete(input_str, candidate):
+	candidate = [x[len(input_str):] for x in candidate if x.startswith(input_str)]
+	if len(candidate) == 1:
+		return candidate[0]
+	elif "" in candidate:
+		return ""
+	elif candidate:
+		return "(" + "|".join(candidate) + ")"
+	else:
+		return ""
 endglobal
 
 
@@ -412,16 +423,30 @@ if match.group(1) == "print":
 	snip.rv += "print("
 else:
 	snip.rv += "logging.info("
-`'epoch [{}/{}], step [{}/{}], loss: {:.4f}'.format($1, $2, $3, $4, $5)$0
+`'epoch [{}/{}], step [{}/{}], loss: {:.4f}'.format(${1:epoch}, ${2:total epoch}, ${3:step}, ${4:total steps}, ${5:loss})$0
 endsnippet
 
-snippet "(print|log)\(error\)" "print loss" wr
+snippet "(print|log)\(error\)" "print loss" br
 `!p
 if match.group(1) == "print":
 	snip.rv += "print("
 else:
 	snip.rv += "logging.error("
 `'line [`!p snip.rv = vim.eval("line('.')")`], ERROR: $1')$0
+endsnippet
+
+snippet "(print|log)\(info\)" "print information" br
+print("line [`!p if not snip.c: snip.rv = vim.eval("line('.')")`] `!p
+info = t[1]
+info = re.sub('"', '\\"', info)
+snip.rv = info
+`: <<<<%s>>>>" % ($1))$0
+endsnippet
+
+snippet print? "what can be printed?" b
+print($1`!p
+snip.rv = complete(t[1], ['info', 'loss'])
+`)$0
 endsnippet
 
 context "has_package('torch')"
