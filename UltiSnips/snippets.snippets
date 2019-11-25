@@ -16,6 +16,17 @@ def add_placeholder(snip):
         # print("###%s###, ###%s###, ###%s###" % (left, info, right))
         snip.buffer[snip.line] = ''
         snip.expand_anon(left + info + right)
+
+def complete(input_str, candidate):
+	candidate = [x[len(input_str):] for x in candidate if x.startswith(input_str)]
+	if len(candidate) == 1:
+		return candidate[0]
+	elif "" in candidate:
+		return ""
+	elif candidate:
+		return "(" + "|".join(candidate) + ")"
+	else:
+		return ""
 endglobal
 
 
@@ -67,7 +78,7 @@ snip.rv = info
 `: ###%s###" % ($1))$0
 endsnippet
 
-snippet currentlr "current line number" w
+snippet vimcurrentlinenumber "current line number" w
 int(vim.eval("line('.')"))
 endsnippet
 
@@ -77,6 +88,12 @@ endsnippet
 
 snippet contentright "current line number" w
 vim.eval("getline('.')[col('.')-1:]")
+endsnippet
+
+snippet vim? "what can be printed?" w
+vim$1`!p
+snip.rv = complete(t[1], ['currentlinenumber', 'currentline'])
+`$0
 endsnippet
 
 # vim:ft=basicsnippets

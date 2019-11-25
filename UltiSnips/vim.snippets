@@ -1,3 +1,18 @@
+global !p
+import re
+
+def pythonenvironment():
+	currentlr = int(vim.eval("line('.')"))
+	for index in range(currentlr-1, -1, -1):
+		line = vim.eval("getline(%d)" % index)
+		if line == "EOF":
+			return False
+		if line.startswith("python"):
+			return True
+	else:
+		return False
+endglobal
+
 snippet func "Snip template" b
 function `!p
 if not snip.c:
@@ -8,6 +23,7 @@ $3
 endfunction$0
 endsnippet
 
+context "not pythonenvironment()"
 snippet pyfunc "Snip template" b
 function `!p
 if not snip.c:
@@ -27,12 +43,22 @@ endif
 endfunction$0
 endsnippet
 
+context "not pythonenvironment()"
 snippet command "command" b
 command! ${1:COMMANDNAME} call ${2:FUNCNAME}()$0
 endsnippet
 
+context "not pythonenvironment()"
 snippet if "if statement" bA
 if $1
 	$2
 endif$0
+endsnippet
+
+snippet print(info) "print information" b
+print("line [`!p if not snip.c: snip.rv = vim.eval("line('.')")`] `!p
+info = t[1]
+info = re.sub('"', '\\"', info)
+snip.rv = info
+`: ###%s###" % ($1))$0
 endsnippet
