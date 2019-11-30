@@ -690,7 +690,7 @@ if snip.context['works'] == 0:
 		# print("line [704] vim.eval(\"col('.')\"): ###%s###" % vim.eval("col('.')"))
 	elif int(vim.eval("col('.')")) - len(match.group(1)) - len(match.group(2)) - len(t[1]) > 3:
 		snip.context['works'] = snip.context['works'] + 1
-		snip.rv = ""
+		# snip.rv = ""
 		# print("line [686] vim.eval(\"getline('.')\"): ###%s###" % vim.eval("getline('.')"))
 		# print("line [687] vim.eval(\"col('.')\"): ###%s###" % vim.eval("col('.')"))
 		# print("line [688] match.group(1): ###%s###" % match.group(1))
@@ -1265,5 +1265,11 @@ else:
 `
 endsnippet
 
+snippet head(slide) "head for slide" b
+autoscale: true
+footer: $1
+slidenumbers: true
+
+endsnippet
 
 # vim:ft=snippets
