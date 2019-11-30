@@ -381,7 +381,19 @@ endsnippet
 
 
 snippet mk "Math" wA
-$${1}$$0
+`!p
+if not snip.c:
+	if snip.buffer[0] == "autoscale: true":
+		snip.rv += "$$"
+	else:
+		snip.rv += "$"
+`$1`!p
+if not snip.c:
+	if snip.buffer[0] == "autoscale: true":
+		snip.rv += "$$"
+	else:
+		snip.rv += "$"
+`$0
 endsnippet
 
 context "not math()"
