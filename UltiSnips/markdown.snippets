@@ -675,26 +675,25 @@ if snip.context['works'] == 0:
 		name = match.group(2)
 		if name[0] == "\\":
 			name = "\\\\" + name[1:]
-		# content = vim_left_all(max_line=100, offset = -(len(name) + len(t[1])))
 		content = [match.group(1)]
+		# content = []
 		currentlinenumber = int(vim.eval("line('.')"))
 		max_line = 100
 		for index in range(currentlinenumber-1, max(0, currentlinenumber - max_line) if max_line > 0 else -1, -1):
-			content.append(vim.eval('getline(%d)' % index))
+			content.append(snip.buffer[index-1])
 		# print("line [671] t[1]: ###%s###" % t[1])
 		# print("line [672] vim.eval(\"getline('.')\"): ###%s###" % vim.eval("getline('.')"))
 		# print("line [673] content: ###%s###" % content)
 		# print("line [674] vim.eval(\"col('.')\"): ###%s###" % vim.eval("col('.')"))
 		candidate = sum([[t[0] for t in re.findall("(?<=" + name  + r"_\{)(([^\{\}]+|\{[^\{\}]+\})+)(?=\})", x)][::-1] for x in content], [])
 		candidate = list(dict.fromkeys(candidate))
-		# print("line [677] candidate: ###%s###" % candidate)
 		candidate = [x[len(t[1]):] for x in candidate if x.startswith(t[1]) and len(t[1]) < len(x)]
 		# print("line [679] candidate: ###%s###" % candidate)
 		if candidate:
 			snip.rv = candidate[0]
 		else:
-			snip.rv = ""
-		# print("line [704] vim.eval(\"col('.')\"): ###%s###" % vim.eval("col('.')"))
+			snip.rv = " "
+		# # print("line [704] vim.eval(\"col('.')\"): ###%s###" % vim.eval("col('.')"))
 	elif int(vim.eval("col('.')")) - len(match.group(1)) - len(match.group(2)) - len(t[1]) > 3:
 		snip.context['works'] = snip.context['works'] + 1
 		# snip.rv = ""
