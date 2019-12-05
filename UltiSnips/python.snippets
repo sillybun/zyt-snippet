@@ -180,11 +180,25 @@ snippet '^.*[\w\)\]}"\']/\]' "list comprehension" wrA
 stripped = match.string[:-2]
 i = start_of_object(stripped)
 snip.rv = stripped[0:i] + "["
-`${1:x} for x in `!p
+`$2 for $1 in `!p
 stripped = match.string[:-2]
 i = start_of_object(stripped)
 snip.rv = stripped[i:]
-`]
+`]$0
+endsnippet
+
+priority 2000
+context "notstring()"
+snippet '^(.*[\w\)\]}"\'])/index\]' "list comprehension" wrA
+`!p
+stripped = match.group(1)
+i = start_of_object(stripped)
+snip.rv = stripped[0:i] + "["
+`index for index, ${1:x} in enumerate(`!p
+stripped = match.group(1)
+i = start_of_object(stripped)
+snip.rv = stripped[i:]
+`) if $2]$0
 endsnippet
 
 priority 1000
@@ -283,7 +297,8 @@ snippet np* "np.dot" wA
 np.dot
 endsnippet
 
-snippet '(?<![a-zA-Z])(\d+)([a-zA-Z])' "2x" wrA
+context "notstring()"
+snippet '(?<![a-zA-Z])(\d+)([a-zA-Z])' "2x" wr
 `!p snip.rv=match.group(1)`*`!p snip.rv=match.group(2)`
 endsnippet
 
