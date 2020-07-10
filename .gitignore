@@ -42,3 +42,5 @@ gh-md-toc
 
 :w
 :q
+*.swp
+.DS_Store
