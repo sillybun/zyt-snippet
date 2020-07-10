@@ -1,3 +1,44 @@
 /UltiSnips/__pycache__/
 /UltiSnips/.mymy_cache
 test*
+
+# Git
+*.orig
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
+*_BACKUP_*.txt
+*_BASE_*.txt
+*_LOCAL_*.txt
+*_REMOTE_*.txt
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Python
+__pycache__/
+*.mypy_cache
+*.py[cod]
+*.old.py
+*$py.class
+
+build/
+.pytest_cache/
+.python-version
+
+# Misc
+*.out
+*.files
+*.lprof
+deprecated
+gh-md-toc
+
+:w
+:q
