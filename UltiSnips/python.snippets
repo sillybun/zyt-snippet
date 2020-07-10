@@ -353,7 +353,6 @@ snip.rv = "[{} + {} * i for i in range({})]".format(start, step, length)
 `
 endsnippet
 
-
 priority 100
 snippet '(-?\d+):(-?\d+)' "range of number" wr
 `!p
@@ -462,6 +461,19 @@ snippet print? "what can be printed?" b
 print($1`!p
 snip.rv = complete(t[1], ['info', 'loss'])
 `)$0
+endsnippet
+
+snippet ENV "environment" b
+
+################################################
+# BEGIN $1
+################################################
+
+${2:${VISUAL}}
+
+################################################
+# END $1
+################################################
 endsnippet
 
 context "has_package('torch')"

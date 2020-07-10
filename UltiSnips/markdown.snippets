@@ -559,7 +559,7 @@ context "math()"
 snippet "(?<=\()@" "copy in parathesis" wr
 $1`!p
 content = vim_left_all(100)
-eandidate = sum([re.findall(r"(?<=\()[^()]+(?=\))", x)[::-1] for x in content], [])
+candidate = sum([re.findall(r"(?<=\()[^()]+(?=\))", x)[::-1] for x in content], [])
 candidate = list(dict.fromkeys(candidate))
 candidate = [x[len(t[1]):] for x in candidate if x.startswith(t[1]) and len(t[1]) < len(x)]
 if len(candidate) == 1:
@@ -886,7 +886,13 @@ endsnippet
 priority 100
 context "math()"
 snippet -> "to" iA
-\to 
+\rightarrow
+endsnippet
+
+priority 100
+context "not math()"
+snippet -> "to" iA
+$\rightarrow$
 endsnippet
 
 priority 200
@@ -983,7 +989,7 @@ snippet nnn "bigcap" iA
 endsnippet
 
 context "math()"
-snippet OO "emptyset" iA
+snippet OO "emptyset" wA
 \O
 endsnippet
 

@@ -141,6 +141,14 @@ def findmatched_parentheses(line, lindex):
 				return index
 	return -1
 
+def vim_left_all(max_line = 100, offset = 0):
+	left = vim.eval("getline('.')[:col('.')-2+(%d)]" % offset)
+	content = [left]
+	currentlinenumber = int(vim.eval("line('.')"))
+	for index in range(currentlinenumber-1, max(0, currentlinenumber - max_line) if max_line > 0 else -1, -1):
+		content.append(vim.eval('getline(%d)' % index))
+	return content
+
 def add_placeholder(snip):
 	info = snip.buffer[snip.line]
 	snip.buffer[snip.line] = ''
@@ -216,12 +224,25 @@ snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
 			displayed += "\n"
 	displayed += " " * len(linfo) + "\\end{%cmatrix}$0" % prefix + (" " + re.sub(r"\\", r"\\\\", rinfo) if rinfo else "")
 	snip.expand_anon(displayed)
+
+def complete(input_str, candidate):
+	candidate = [x[len(input_str):] for x in candidate if x.startswith(input_str)]
+	if len(candidate) == 1:
+		return candidate[0]
+	elif "" in candidate:
+		return ""
+	elif candidate:
+		return "(" + "|".join(candidate) + ")"
+	else:
+		return ""
 endglobal
 
-snippet template "Basic template" b
+snippet template(basic) "Basic template" b
 %!TeX program = xelatex
 
 \documentclass{article}
+
+% \usepackage[UTF8, noindent, heading]{ctex}
 
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.16}
@@ -262,6 +283,121 @@ snippet template "Basic template" b
 \end{document}
 endsnippet
 
+snippet template(slide) "template for slike" b
+%!TeX program = xelatex
+\documentclass{beamer}
+
+\usepackage[UTF8, noindent, heading]{ctex}
+\usepackage{awesomebox}
+% \usepackage{listings}
+
+% \usepackage{color}
+
+% \definecolor{dkgreen}{rgb}{0,0.6,0}
+% \definecolor{gray}{rgb}{0.5,0.5,0.5}
+% \definecolor{mauve}{rgb}{0.58,0,0.82}
+
+% \lstset{frame=tb,
+%   language=Python,
+%   aboveskip=3mm,
+%   belowskip=3mm,
+%   showstringspaces=false,
+%   columns=flexible,
+%   basicstyle={\small\ttfamily},
+%   numbers=none,
+%   numberstyle=\tiny\color{gray},
+%   keywordstyle=\color{blue},
+%   commentstyle=\color{dkgreen},
+%   stringstyle=\color{mauve},
+%   breaklines=true,
+%   breakatwhitespace=true,
+%   tabsize=3
+% }
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+%\usepackage {tikz}
+\usepackage{tkz-graph}
+
+\GraphInit[vstyle = Shade]
+\tikzset{
+  LabelStyle/.style = { rectangle, rounded corners, draw,
+                        minimum width = 2em, fill = yellow!50,
+                        text = red, font = \bfseries },
+  VertexStyle/.append style = { inner sep=5pt,
+                                font = \normalsize\bfseries},
+  EdgeStyle/.append style = {->, bend left} }
+\usetikzlibrary {positioning}
+%\usepackage {xcolor}
+\definecolor {processblue}{cmyk}{0.96,0,0,0}
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+$0
+\end{document}
+endsnippet
+
 snippet beg "begin{} / end{}" bA
 \\begin{$1}
 	$0
@@ -293,7 +429,7 @@ snippet fig "Figure environment" b
 \end{figure}
 endsnippet
 
-snippet enum "Enumerate" bA
+snippet "enum" "Enumerate" brA
 \begin{enumerate}
 	\item $0
 \end{enumerate}
@@ -343,15 +479,16 @@ snippet dm "Math" wA
 \]
 endsnippet
 
+context "math()"
 snippet ali "Align" bA
-\begin{align*}
+\begin{aligned}
 ${1:`!p
 selectedcode = [x for x in snip.v.text.split("\n") if x]
 for (i, x) in enumerate(selectedcode):
     index = findfirstoperator(x)
     snip.rv += ("" if i == 0 else "    ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
 `}
-\end{align*}
+\end{aligned}
 endsnippet
 
 snippet bali "Align with {" bA
@@ -505,7 +642,7 @@ context "math()"
 snippet "(?<=\()@" "copy in parathesis" wr
 $1`!p
 content = vim_left_all(100)
-eandidate = sum([re.findall(r"(?<=\()[^()]+(?=\))", x)[::-1] for x in content], [])
+candidate = sum([re.findall(r"(?<=\()[^()]+(?=\))", x)[::-1] for x in content], [])
 candidate = list(dict.fromkeys(candidate))
 candidate = [x[len(t[1]):] for x in candidate if x.startswith(t[1]) and len(t[1]) < len(x)]
 if len(candidate) == 1:
@@ -886,24 +1023,28 @@ snippet -- "setminus" iA
 \setminus
 endsnippet
 
+context "math()"
 snippet >> ">>" iA
 \gg
 endsnippet
 
+context "math()"
 snippet << "<<" iA
 \ll
 endsnippet
 
 
+context "math()"
 snippet ~~ "~" iA
 \sim 
 endsnippet
 
 context "math()"
 snippet set "set" wA
-\\{${1:$VISUAL}}\\} $0
+\\{${1:${VISUAL}}\\} $0
 endsnippet
 
+context "math()"
 snippet || "mid" iA
  \mid 
 endsnippet
@@ -923,50 +1064,63 @@ snippet inn "in " iA
 \in 
 endsnippet
 
+context "math()"
 snippet NN "n" iA
 \mathbb{N}
 endsnippet
 
+context "math()"
 snippet Nn "cap" iA
 \cap 
 endsnippet
 
+context "math()"
 snippet UU "cup" iA
 \cup 
 endsnippet
 
+context "math()"
 snippet uuu "bigcup" iA
 \bigcup_{${1:i \in ${2: I}}} $0
 endsnippet
 
+context "math()"
 snippet nnn "bigcap" iA
 \bigcap_{${1:i \in ${2: I}}} $0
 endsnippet
 
+context "math()"
 snippet OO "emptyset" iA
 \O
 endsnippet
 
+
+context "math()"
 snippet RR "real" iA
 \mathbb{R}
 endsnippet
 
+context "math()"
 snippet PP "Probability" wA
 \mathbb{P}
 endsnippet
 
+context "math()"
 snippet QQ "Q" iA
 \mathbb{Q}
 endsnippet
 
+context "math()"
 snippet ZZ "Z" iA
 \mathbb{Z}
 endsnippet
 
+context "math()"
 snippet <! "normal" iA
 \triangleleft 
 endsnippet
 
+context "math()"
 snippet <> "hokje" iA
 \diamond 
 endsnippet
@@ -1083,6 +1237,11 @@ endsnippet
 context "math()"
 snippet DD "D" iA
 \mathbb{D}
+endsnippet
+
+context "math()"
+snippet Cov "Covariance" iA
+\mathrm{Cov} 
 endsnippet
 
 context "math()"
@@ -1268,6 +1427,18 @@ elif match.group(1)[-1] == ")":
 else:
 	snip.rv += line[:left_parentheses].rstrip()[:-5] + "[" + line[left_parentheses+1:-1].rstrip()[:-6] + "]"
 `
+endsnippet
+
+snippet template? "What kind of template" b
+template($1`!p
+snip.rv = complete(t[1], ['basic', 'slide'])
+`)$0
+endsnippet
+
+snippet frame "frame of slide" b
+\begin{frame}{$1}
+$0
+\end{frame}
 endsnippet
 
 # vim:ft=snippets
