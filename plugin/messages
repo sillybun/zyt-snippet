@@ -1,0 +1,137 @@
+
+From /Users/zhangyiteng/.vimrc:
+Executing Test_AutoHover_Disabled()
+Executing Test_Changing_Filetype_Refreshes_Diagnostics()
+Executing Test_Compl_After_Trigger()
+Executing Test_Compl_No_Filetype()
+Executing Test_Compl_No_Filetype_Blacklisted()
+Executing Test_Completion_FixIt()
+Executing Test_DontResolveCompletion_AlreadyResolved()
+Executing Test_Enter_Delete_Chars_Updates_Filter()
+Executing Test_Force_Semantic_TopLevel()
+Executing Test_GetCommandResponse()
+Executing Test_GetCommandResponse_FixIt()
+Executing Test_GetDefinedSubcommands_Native()
+Executing Test_GetDefinedSubcommands_NoNative()
+Executing Test_Hover_Custom_Command()
+Executing Test_Hover_Custom_Syntax()
+Executing Test_Hover_Disabled_NonNative()
+Executing Test_Hover_Dismiss()
+Executing Test_Hover_MoveCursor()
+Executing Test_Hover_NonNative()
+Executing Test_Hover_Uses_GetDoc()
+Executing Test_Hover_Uses_GetHover()
+Executing Test_Hover_Uses_GetType()
+Executing Test_Hover_Uses_None()
+Executing Test_Long_Single_Line()
+Executing Test_Long_Wrapped()
+Executing Test_MessagePoll_After_LocationList()
+Executing Test_MessagePoll_Multiple_Filetypes()
+Executing Test_No_Resolve()
+Executing Test_OmniComplete_Filter()
+Executing Test_OmniComplete_Force()
+Executing Test_Open_Supported_Filetype_Messages()
+Executing Test_Open_Unsupported_Filetype_Messages()
+Executing Test_Ranged_Fixit_Works()
+Executing Test_ResolveCompletion_OnChange()
+Executed 34 tests
+34 FAILED:
+Found errors in /Users/zhangyiteng/.vimrc:Test_AutoHover_Disabled():
+Caught exception in SetUp() before Test_AutoHover_Disabled(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_AutoHover_Disabled(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_AutoHover_Disabled[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Changing_Filetype_Refreshes_Diagnostics():
+Caught exception in SetUp() before Test_Changing_Filetype_Refreshes_Diagnostics(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Changing_Filetype_Refreshes_Diagnostics(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Changing_Filetype_Refreshes_Diagnostics[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Compl_After_Trigger():
+Caught exception in SetUp() before Test_Compl_After_Trigger(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Compl_After_Trigger(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Compl_After_Trigger[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Compl_No_Filetype():
+Caught exception in SetUp() before Test_Compl_No_Filetype(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Compl_No_Filetype(): Vim(call):E121: Undefined variable: b:ycm_completing @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Compl_No_Filetype, line 8
+Found errors in /Users/zhangyiteng/.vimrc:Test_Compl_No_Filetype_Blacklisted():
+Caught exception in SetUp() before Test_Compl_No_Filetype_Blacklisted(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Found errors in /Users/zhangyiteng/.vimrc:Test_Completion_FixIt():
+Caught exception in SetUp() before Test_Completion_FixIt(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Completion_FixIt(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Completion_FixIt[5]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_DontResolveCompletion_AlreadyResolved():
+Caught exception in SetUp() before Test_DontResolveCompletion_AlreadyResolved(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_DontResolveCompletion_AlreadyResolved(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_DontResolveCompletion_AlreadyResolved[4]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Enter_Delete_Chars_Updates_Filter():
+Caught exception in SetUp() before Test_Enter_Delete_Chars_Updates_Filter(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Enter_Delete_Chars_Updates_Filter(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Enter_Delete_Chars_Updates_Filter[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Force_Semantic_TopLevel():
+Caught exception in SetUp() before Test_Force_Semantic_TopLevel(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Force_Semantic_TopLevel(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Force_Semantic_TopLevel[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_GetCommandResponse():
+Caught exception in SetUp() before Test_GetCommandResponse(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_GetCommandResponse(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_GetCommandResponse[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_GetCommandResponse_FixIt():
+Caught exception in SetUp() before Test_GetCommandResponse_FixIt(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_GetCommandResponse_FixIt(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_GetCommandResponse_FixIt[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_GetDefinedSubcommands_Native():
+Caught exception in SetUp() before Test_GetDefinedSubcommands_Native(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_GetDefinedSubcommands_Native(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_GetDefinedSubcommands_Native[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_GetDefinedSubcommands_NoNative():
+Caught exception in SetUp() before Test_GetDefinedSubcommands_NoNative(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Found errors in /Users/zhangyiteng/.vimrc:Test_Hover_Custom_Command():
+Caught exception in SetUp() before Test_Hover_Custom_Command(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Hover_Custom_Command(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Hover_Custom_Command[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Hover_Custom_Syntax():
+Caught exception in SetUp() before Test_Hover_Custom_Syntax(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Hover_Custom_Syntax(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Hover_Custom_Syntax[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Hover_Disabled_NonNative():
+Caught exception in SetUp() before Test_Hover_Disabled_NonNative(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Hover_Disabled_NonNative(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Hover_Disabled_NonNative[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Hover_Dismiss():
+Caught exception in SetUp() before Test_Hover_Dismiss(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Hover_Dismiss(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Hover_Dismiss[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Hover_MoveCursor():
+Caught exception in SetUp() before Test_Hover_MoveCursor(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Hover_MoveCursor(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Hover_MoveCursor[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Hover_NonNative():
+Caught exception in SetUp() before Test_Hover_NonNative(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Hover_NonNative(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Hover_NonNative[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Hover_Uses_GetDoc():
+Caught exception in SetUp() before Test_Hover_Uses_GetDoc(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Hover_Uses_GetDoc(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Hover_Uses_GetDoc[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Hover_Uses_GetHover():
+Caught exception in SetUp() before Test_Hover_Uses_GetHover(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Hover_Uses_GetHover(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Hover_Uses_GetHover[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Hover_Uses_GetType():
+Caught exception in SetUp() before Test_Hover_Uses_GetType(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Hover_Uses_GetType(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Hover_Uses_GetType[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Hover_Uses_None():
+Caught exception in SetUp() before Test_Hover_Uses_None(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Hover_Uses_None(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Hover_Uses_None[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Long_Single_Line():
+Caught exception in SetUp() before Test_Long_Single_Line(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Long_Single_Line(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Long_Single_Line[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_Long_Wrapped():
+Caught exception in SetUp() before Test_Long_Wrapped(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_Long_Wrapped(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Long_Wrapped[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_MessagePoll_After_LocationList():
+Caught exception in SetUp() before Test_MessagePoll_After_LocationList(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_MessagePoll_After_LocationList(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_MessagePoll_After_LocationList[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_MessagePoll_Multiple_Filetypes():
+Caught exception in SetUp() before Test_MessagePoll_Multiple_Filetypes(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_MessagePoll_Multiple_Filetypes(): Vim(execute):E121: Undefined variable: g:ycm_test_plugin_dir @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_MessagePoll_Multiple_Filetypes[1]..youcompleteme#test#setup#OpenFile, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_No_Resolve():
+Caught exception in SetUp() before Test_No_Resolve(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+Caught exception in Test_No_Resolve(): Vim:E492: Not an editor command: YcmDebugInfo @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_No_Resolve, line 1
+Found errors in /Users/zhangyiteng/.vimrc:Test_OmniComplete_Filter():
+Caught exception in SetUp() before Test_OmniComplete_Filter(): Vim(source):E484: Can't open file /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/vimrc @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[39]..SetUp[6]..youcompleteme#test#setup#SetUp, line 10
+/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_OmniComplete_Filter[38]..FeedAndCheckMain[2]..Check1[1]..WaitForCompletion[1]..WaitForAssert[2]..<SNR>81_WaitForCommon[11]..<lambda>1 line 1: Expected True but got 0
+Caught exception in Test_OmniComplete_Filter(): Vim:Interrupt @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_OmniComplete_Filter[38]..FeedAndCheckMain, line 2
+Found errors in /Users/zhangyiteng/.vimrc:Test_OmniComplete_Force():
+Caught exception in Test_OmniComplete_Force(): Vim:Interrupt @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_OmniComplete_Force[38]..FeedAndCheckMain, line 2
+Found errors in /Users/zhangyiteng/.vimrc:Test_Open_Supported_Filetype_Messages():
+Caught exception in Test_Open_Supported_Filetype_Messages(): Vim:Interrupt @ /Users/zhangyiteng/.vimrc:/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Open_Supported_Filetype_Messages[6]..BufRead Autocommands for "*"..script /Applications/MacVim.app/Contents/Resources/vim/runtime/scripts.vim, line 363
+Found errors in /Users/zhangyiteng/.vimrc:Test_Open_Unsupported_Filetype_Messages():
+/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest line 71: Test Test_Open_Unsupported_Filetype_Messages() produced unexpected messages output ' Error detected while processing /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Open_Unsupported_Filetype_Messages[7]..BufWritePost Autocommands for "*"..script /Users/zhangyiteng/.vim/plugged/LeaderF/autoload/leaderf/Gtags.vim: line   14: Traceback (most recent call last):   File "<string>", line 1, in <module>   File "/Users/zhangyiteng/.vim/plugged/LeaderF/autoload/leaderf/python/leaderf/gtagsExpl.py", line 13, in <module>     from .manager import *   File "/Users/zhangyiteng/.vim/plugged/LeaderF/autoload/leaderf/python/leaderf/manager.py", line 15, in <module>     from .instance import LfInstance   File "/Users/zhangyiteng/.vim/plugged/LeaderF/autoload/leaderf/python/leaderf/instance.py", line 11, in <module>     from .devicons import highlightDevIcons   File "/Users/zhangyiteng/.vim/plugged/LeaderF/autoload/leaderf/python/leaderf/devicons.py", line 44, in <module>     fileNodesExactSymbols.update(lfEval("get(g:, ''Lf_DevIconsExactSymbols'', {})")) KeyboardInterrupt Error detected while processing /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Open_Unsupported_Filetype_Messages[7]..BufWritePost Autocommands for "*"..function leaderf#Gtags#updateGtags: line    3: Traceback (most recent call last):   File "<string>", line 1, in <module> NameError: name ''gtagsExplManager'' is not defined' (hint: call :messages clear if this is expected, or use :silent): Expected True but got 0
+Found errors in /Users/zhangyiteng/.vimrc:Test_Ranged_Fixit_Works():
+/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Ranged_Fixit_Works line 7: Expected '        System.out.println( "Did something useful: " + w.getWidgetInfo() );' but got ''
+/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Ranged_Fixit_Works line 20: Pattern '        String \\(x\\|string\\) = "Did something useful: " + w.getWidgetInfo();' does not match ''
+/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Ranged_Fixit_Works line 22: Pattern '\\t\\tSystem.out.println( \\(x\\|string\\) );' does not match ''
+/Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest line 71: Test Test_Ranged_Fixit_Works() produced unexpected messages output ' Error detected while processing /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Ranged_Fixit_Works[1]..youcompleteme#test#setup#OpenFile: line    1: E121: Undefined variable: g:ycm_test_plugin_dir Error detected while processing /Users/zhangyiteng/.vim/plugged/zyt-snippet/plugin/YouCompleteMe/test/lib/run_test.vim[393]..function RunTheTest[68]..Test_Ranged_Fixit_Works: line   17: E492: Not an editor command:   ''<,''>YcmCompleter FixIt' (hint: call :messages clear if this is expected, or use :silent): Expected True but got 0
+Found errors in /Users/zhangyiteng/.vimrc:Test_ResolveCompletion_OnChange():
+Test caused Vim to exit: Test_ResolveCompletion_OnChange()

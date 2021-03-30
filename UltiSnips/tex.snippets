@@ -1,7 +1,6 @@
 global !p
-texMathZones = ['texMathZone'+x for x in ['A', 'AS', 'B', 'BS', 'C', 'CS', 'D', 'DS', 'E', 'ES', 'F', 'FS', 'G', 'GS', 'H', 'HS', 'I', 'IS', 'J', 'JS', 'K', 'KS', 'L', 'LS', 'DS', 'V', 'W', 'X', 'Y', 'Z']]
-
-texIgnoreMathZones = ['texMathText']
+texMathZones = ['texMathZone' + x for x in ['', 'X', 'XX', 'Env', 'EnvStarred', 'Ensured']]
+texIgnoreMathZones = ['texMathTextArg']
 
 texMathZoneIds = vim.eval('map('+str(texMathZones)+", 'hlID(v:val)')")
 texIgnoreMathZoneIds = vim.eval('map('+str(texIgnoreMathZones)+", 'hlID(v:val)')")
@@ -975,7 +974,7 @@ endsnippet
 
 priority 300
 context "math()"
-snippet dint "integral" wA
+snippet dint "integral" w
 \int_{${1:-\infty}}^{${2:\infty}} ${3:${VISUAL}} \,\mathrm{d} $0
 endsnippet
 
