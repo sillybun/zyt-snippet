@@ -2,6 +2,16 @@ global !p
 import re
 
 def start_of_object(stripped):
+	"""
+	@type stripped: str
+
+	--------
+	get the start position of the last token in stripped:
+	for example:
+	input:
+	start_of_object("    return f([1,2,3])")
+	will give 11
+	"""
 	i = len(stripped) - 1
 	depth = 0
 	instringsingle = False
@@ -40,6 +50,52 @@ def start_of_object(stripped):
 				continue
 		i-=1
 	return i + 1
+
+def end_of_object(stripped):
+	i = 0
+	depth = 0
+	instringsingle = False
+	instringdouble = False
+	while i < len(stripped):
+		if not instringsingle and not instringdouble:
+			if stripped[i] in ["(", "[", "{"]:
+				depth += 1
+				i += 1
+				continue
+			if stripped[i] in [")", "]", "}"]:
+				depth -= 1
+				if depth < 0:
+					break
+				i += 1
+				continue
+			if stripped[i] == '"':
+				instringdouble = True
+				i += 1
+				continue
+			if stripped[i] == '\'':
+				instringsingle = True
+				i += 1
+				continue
+			if stripped[i] in [' ', '+', '-', '*', '/', '=', ':', ',', '&', '>', '<'] and depth == 0:
+				break
+		elif instringsingle:
+			if stripped[i] == '\\':
+				i += 2
+				continue
+			if stripped[i] == '\'':
+				instringsingle = False
+				i += 1
+				continue
+		else:
+			if stripped[i] == '\\':
+				i += 2
+				continue
+			if stripped[i] == '"':
+				instringdouble = False
+				i += 1
+				continue
+		i += 1
+	return min(i, len(stripped))
 
 def start_of_expression(stripped):
 	i = len(stripped) - 1
@@ -159,65 +215,68 @@ def complete(input_str, candidate):
 endglobal
 
 
-priority 1000
-context "notstring()"
-snippet '^.*[\w\)\]}"\']/FF' "filter" wrA
-`!p
-stripped = match.string[:-3]
-i = start_of_object(stripped)
-snip.rv = stripped[0:i] + "filter(lambda "
-`${1:x}: $1 $2, `!p
-stripped = match.string[:-3]
-i = start_of_object(stripped)
-snip.rv = stripped[i:-1] + ")"
-`
-endsnippet
+# priority 1000
+# context "notstring()"
+# snippet '^.*[\w\)\]}"\']/FF' "filter" wrA
+# `!p
+# stripped = match.string[:-3]
+# i = start_of_object(stripped)
+# snip.rv = stripped[0:i] + "filter(lambda "
+# `${1:x}: $1 $2, `!p
+# stripped = match.string[:-3]
+# i = start_of_object(stripped)
+# snip.rv = stripped[i:-1] + ")"
+# `
+# endsnippet
 
-priority 1000
-context "notstring()"
-snippet '^.*[\w\)\]}"\']/\]' "list comprehension" wrA
-`!p
-stripped = match.string[:-2]
-i = start_of_object(stripped)
-snip.rv = stripped[0:i] + "["
-`$2 for $1 in `!p
-stripped = match.string[:-2]
-i = start_of_object(stripped)
-snip.rv = stripped[i:]
-`]$0
-endsnippet
+# priority 1000
+# context "notstring()"
+# snippet '^.*[\w\)\]}"\']/\]' "list comprehension" wrA
+# `!p
+# stripped = match.string[:-2]
+# i = start_of_object(stripped)
+# snip.rv = stripped[0:i] + "["
+# `$2 for $1 in `!p
+# stripped = match.string[:-2]
+# i = start_of_object(stripped)
+# snip.rv = stripped[i:]
+# `]$0
+# endsnippet
 
-priority 2000
-context "notstring()"
-snippet '^(.*[\w\)\]}"\'])/index\]' "list comprehension" wrA
-`!p
-stripped = match.group(1)
-i = start_of_object(stripped)
-snip.rv = stripped[0:i] + "["
-`index for index, ${1:x} in enumerate(`!p
-stripped = match.group(1)
-i = start_of_object(stripped)
-snip.rv = stripped[i:]
-`) if $2]$0
-endsnippet
+# priority 2000
+# context "notstring()"
+# snippet '^(.*[\w\)\]}"\'])/index\]' "list comprehension" wrA
+# `!p
+# stripped = match.group(1)
+# i = start_of_object(stripped)
+# snip.rv = stripped[0:i] + "["
+# `index for index, ${1:x} in enumerate(`!p
+# stripped = match.group(1)
+# i = start_of_object(stripped)
+# snip.rv = stripped[i:]
+# `) if $2]$0
+# endsnippet
 
-priority 1000
-context "notstring()"
-snippet '(^.*[\w\)\]}"\'])/([a-zA-Z][\w.]*|[\w^+\-*/\(\).]+)\]' "list comprehension" wrA
-`!p
-import re
-stripped = match.group(1)
-i = start_of_object(stripped)
-funname = match.group(2)
-snip.rv = stripped[0:i] + "["
-if re.fullmatch("[a-zA-Z][\w.]+", funname):
-	snip.rv += funname + "(x)"
-else:
-	snip.rv += funname
-snip.rv += " for x in " + stripped[i:] + "]"
-`
-endsnippet
+# priority 1000
+# context "notstring()"
+# snippet '(^.*[\w\)\]}"\'])/([a-zA-Z][\w.]*|[\w^+\-*/\(\).]+)\]' "list comprehension" wrA
+# `!p
+# import re
+# stripped = match.group(1)
+# i = start_of_object(stripped)
+# funname = match.group(2)
+# snip.rv = stripped[0:i] + "["
+# if re.fullmatch("[a-zA-Z][\w.]+", funname):
+# 	snip.rv += funname + "(x)"
+# else:
+# 	snip.rv += funname
+# snip.rv += " for x in " + stripped[i:] + "]"
+# `
+# endsnippet
 
+# Example:
+# object/,
+# -> f(object, )
 priority 1000
 context "notstring()"
 snippet '^.*[\w\)\]}"\']/,' "apply function" wrA
@@ -232,7 +291,7 @@ snip.rv = stripped[i:]
 `, $2)$0
 endsnippet
 
-
+# Example:
 priority 1000
 context "notstring()"
 snippet '^(.*[\w\)\]}"\'])//' "apply single value function" wrA
@@ -247,6 +306,9 @@ snip.rv = stripped[i:]
 `)$0
 endsnippet
 
+# Example:
+# object/func,
+# -> func(object, )
 priority 1000
 context "notstring()"
 snippet '^(.*[\w\)\]}"\'])/([a-zA-Z][\w\.]*),' "apply function" wrA
