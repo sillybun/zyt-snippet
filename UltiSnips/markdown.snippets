@@ -9,9 +9,7 @@ RightArrows = r"\rightarrow|\longrightarrow|\Rightarrow|\Longrightarrow".split("
 LeftrightArrows = ["\\" + x for x in "leftrightarrow|longleftrightarrow|Leftrightarrow|Longleftrightarrow|iff".split("|")]
 
 import re
-import sys
-sys.path.append(vim.eval("g:ZYTSNIP_PATH") + "UltiSnips")
-from pythonutil import last_p1_not_p2, first_p1_not_p2
+from snippet_helpers import last_p1_not_p2, first_p1_not_p2
 
 def back_parentheses():
 	right = vim.eval("getline('.')[col('.')-1:]")
@@ -334,9 +332,7 @@ def generate_matrix(prefix, snip):
 			return ""
 		else:
 			code = """`!p
-import sys
-sys.path.append(vim.eval("g:ZYTSNIP_PATH") + "UltiSnips")
-from pythonutil import generate_matrix_element
+from snippet_helpers import generate_matrix_element
 snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
 `""" % (i, j, row, column, virtual_row, virtual_column, "''," + ",".join("t[%d]" % x for x in range(1, j+1)), "''," + ",".join("t[%d]" % (1 + column * (x-1)) for x in range(1, i+1)))
 		return code
@@ -353,7 +349,7 @@ snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
 				displayed += "${" + "{}".format(index) + ":" + generate_code(j, i, row_amount, column_amount, virtual_row_amount, virtual_column_amount) + "} " + ("& " if i < column_amount else "\\" * 4)
 				index += 1
 			displayed += "\n"
-	displayed += " " * len(linfo) + "\\end{%cmatrix}$0" % prefix + (" " + sub(r"\\", r"\\\\", rinfo) if rinfo else "")
+	displayed += " " * len(linfo) + "\\end{%cmatrix}$0" % prefix + (" " + re.sub(r"\\", r"\\\\", rinfo) if rinfo else "")
 	# print("line [357] displayed: ###%s###" % displayed)
 	snip.expand_anon(displayed)
 endglobal

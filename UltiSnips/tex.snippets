@@ -202,9 +202,7 @@ def generate_matrix(prefix, snip):
 			return ""
 		else:
 			code = """`!p
-import sys
-sys.path.append(vim.eval("g:ZYTSNIP_PATH") + "UltiSnips")
-from pythonutil import generate_matrix_element
+from snippet_helpers import generate_matrix_element
 snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
 `""" % (i, j, row, column, virtual_row, virtual_column, "''," + ",".join("t[%d]" % x for x in range(1, j+1)), "''," + ",".join("t[%d]" % (1 + column * (x-1)) for x in range(1, i+1)))
 		return code
@@ -474,8 +472,8 @@ endsnippet
 
 snippet dm "Math" wA
 \[
-${1:${VISUAL}}.
-\] $0
+	${1:${VISUAL}}
+\]
 endsnippet
 
 context "math()"
