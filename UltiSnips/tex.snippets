@@ -1,11 +1,4 @@
 global !p
-texMathZones = ['texMathZone' + x for x in ['', 'X', 'XX', 'Env', 'EnvStarred', 'Ensured']]
-texIgnoreMathZones = ['texMathTextArg']
-
-texMathZoneIds = vim.eval('map('+str(texMathZones)+", 'hlID(v:val)')")
-texIgnoreMathZoneIds = vim.eval('map('+str(texIgnoreMathZones)+", 'hlID(v:val)')")
-
-ignore = texIgnoreMathZoneIds[0]
 
 HatSequence = r"\overline \bar \hat \tilde \widetilde \widehat".split()
 
@@ -17,13 +10,10 @@ LeftrightArrows = ["\\" + x for x in "leftrightarrow|longleftrightarrow|Leftrigh
 
 import re
 
+
 def math():
-	synstackids = vim.eval("synstack(line('.'), col('.') - (col('.')>=2 ? 1 : 0))")
-	try:
-		first = next(i for i in reversed(synstackids) if i in texIgnoreMathZoneIds or i in texMathZoneIds)
-		return first != ignore
-	except StopIteration:
-		return False
+	return vim.eval('vimtex#syntax#in_mathzone()') == '1'
+
 
 def environment(default_envname = None, lastemptyline = False):
 	currentlinenumber = int(vim.eval("line('.')"))
