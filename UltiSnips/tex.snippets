@@ -464,7 +464,7 @@ snippet iff "iff" wA
 endsnippet
 
 snippet mk "Math" wA
-$${1}$`!p
+$${1:${VISUAL}}$`!p
 if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
 	snip.rv = ' '
 else:
@@ -474,8 +474,8 @@ endsnippet
 
 snippet dm "Math" wA
 \[
-	${1:${VISUAL}}
-\]
+${1:${VISUAL}}.
+\] $0
 endsnippet
 
 context "math()"
@@ -505,7 +505,7 @@ endsnippet
 
 context "math()"
 snippet // "Fraction" iA
-\\frac{$1}{$2}$0
+\\frac{${1:${VISUAL}}}{$2}$0
 endsnippet
 
 snippet / "Fraction" i
