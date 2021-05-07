@@ -1,11 +1,4 @@
 global !p
-texMathZones = ['texMathZone' + x for x in ['', 'X', 'XX', 'Env', 'EnvStarred', 'Ensured']]
-texIgnoreMathZones = ['texMathTextArg']
-
-texMathZoneIds = vim.eval('map('+str(texMathZones)+", 'hlID(v:val)')")
-texIgnoreMathZoneIds = vim.eval('map('+str(texIgnoreMathZones)+", 'hlID(v:val)')")
-
-ignore = texIgnoreMathZoneIds[0]
 
 HatSequence = r"\overline \bar \hat \tilde \widetilde \widehat".split()
 
@@ -17,13 +10,10 @@ LeftrightArrows = ["\\" + x for x in "leftrightarrow|longleftrightarrow|Leftrigh
 
 import re
 
+
 def math():
-	synstackids = vim.eval("synstack(line('.'), col('.') - (col('.')>=2 ? 1 : 0))")
-	try:
-		first = next(i for i in reversed(synstackids) if i in texIgnoreMathZoneIds or i in texMathZoneIds)
-		return first != ignore
-	except StopIteration:
-		return False
+	return vim.eval('vimtex#syntax#in_mathzone()') == '1'
+
 
 def environment(default_envname = None, lastemptyline = False):
 	currentlinenumber = int(vim.eval("line('.')"))
@@ -202,9 +192,7 @@ def generate_matrix(prefix, snip):
 			return ""
 		else:
 			code = """`!p
-import sys
-sys.path.append(vim.eval("g:ZYTSNIP_PATH") + "UltiSnips")
-from pythonutil import generate_matrix_element
+from snippet_helpers import generate_matrix_element
 snip.rv = generate_matrix_element(%d, %d, %d, %d, '%c', '%c', [%s], [%s])
 `""" % (i, j, row, column, virtual_row, virtual_column, "''," + ",".join("t[%d]" % x for x in range(1, j+1)), "''," + ",".join("t[%d]" % (1 + column * (x-1)) for x in range(1, i+1)))
 		return code
@@ -464,7 +452,7 @@ snippet iff "iff" wA
 endsnippet
 
 snippet mk "Math" wA
-$${1}$`!p
+$${1:${VISUAL}}$`!p
 if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
 	snip.rv = ' '
 else:
@@ -505,9 +493,10 @@ endsnippet
 
 context "math()"
 snippet // "Fraction" iA
-\\frac{$1}{$2}$0
+\\frac{${1:${VISUAL}}}{$2}$0
 endsnippet
 
+context "math()"
 snippet / "Fraction" i
 \\frac{${VISUAL}}{$1}$0
 endsnippet
