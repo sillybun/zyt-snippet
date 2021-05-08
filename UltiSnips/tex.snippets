@@ -2,6 +2,13 @@ global !p
 
 HatSequence = r"\overline \bar \hat \tilde \widetilde \widehat".split()
 
+DotsSequence = r"\ldots \cdots \vdots \ddots".split()
+
+FontSizeSequence = r"\tiny \scriptsize \footnotesize \small \normalsize \large \Large \LARGE \huge \Huge".split()
+
+SpaceSequence = r"\,|\:|\;|\ |\quad|\qquad|\!".split("|")
+
+
 LeftArrows = r"\leftarrow|\longleftarrow|\Leftarrow|\Longleftarrow".split("|")
 
 RightArrows = r"\rightarrow|\longrightarrow|\Rightarrow|\Longrightarrow".split("|")
@@ -1264,6 +1271,7 @@ snippet "(?<![\\a-zA-Z])(mu|alpha|sigma|rho|beta|gamma|delta|zeta|eta|varepsilon
 \\`!p snip.rv = match.group(1)`
 endsnippet
 
+# See https://tex.stackexchange.com/questions/37789/using-colon-or-in-formulas
 context "math()"
 snippet : "colon" iA
 \colon
@@ -1290,8 +1298,36 @@ except:
 `
 endsnippet
 
-context "math()"
+# https://www.overleaf.com/learn/latex/Font_sizes,_families,_and_styles
+snippet "(\\(tiny|scriptsize|footnotesize|small|normalsize|large|Large|LARGE|huge|Huge))" "next type of font size" wr
+`!p
+symbol_list = FontSizeSequence
+index = symbol_list.index(match.group(1))
+snip.rv = symbol_list[(index + 1) % len(symbol_list)]
+`
+endsnippet
 
+context "math()"
+snippet "(\\(ldots|cdots|vdots|ddots))" "next type of dots" wr
+`!p
+symbol_list = DotsSequence
+index = symbol_list.index(match.group(1))
+snip.rv = symbol_list[(index + 1) % len(symbol_list)]
+`
+endsnippet
+
+# See https://www.overleaf.com/learn/latex/Lengths_in_LaTeX
+priority 300
+context "math()"
+snippet "(\\(,|:|;| |quad|qquad|!))" "3/4/5/normal/18/36/-3em" wr
+`!p
+symbol_list = SpaceSequence
+index = symbol_list.index(match.group(1))
+snip.rv = symbol_list[(index + 1) % len(symbol_list)]
+`
+endsnippet
+
+context "math()"
 snippet "(\\(leftarrow|longleftarrow|Leftarrow|Longleftarrow))" "next type of left arrow" wr
 `!p
 symbol_list = LeftArrows
