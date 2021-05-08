@@ -962,9 +962,10 @@ snippet abs "abstract value" iA
 \left\vert ${1:${VISUAL}} \right\vert $0
 endsnippet
 
+# See Section 5.1 of the document of amsmath https://texdoc.org/serve/amsmath/0
 priority 100
 context "math()"
-snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv|sup|inf|max|min)' "ln" rwA
+snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv|sup|inf|max|min|dim|ker|Pr)' "ln" rwA
 \\`!p snip.rv = match.group(1)`
 endsnippet
 
