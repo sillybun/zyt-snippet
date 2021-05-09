@@ -9,9 +9,9 @@ FontSizeSequence = r"\tiny \scriptsize \footnotesize \small \normalsize \large \
 SpaceSequence = r"\,|\:|\;|\ |\quad|\qquad|\!".split("|")
 
 
-LeftArrows = r"\leftarrow|\longleftarrow|\Leftarrow|\Longleftarrow".split("|")
+LeftArrows = r"\leftarrow|\longleftarrow|\Leftarrow|\Longleftarrow|\xleftarrow".split("|")
 
-RightArrows = r"\rightarrow|\longrightarrow|\Rightarrow|\Longrightarrow".split("|")
+RightArrows = r"\rightarrow|\longrightarrow|\Rightarrow|\Longrightarrow|\xrightarrow".split("|")
 
 LeftrightArrows = ["\\" + x for x in "leftrightarrow|longleftrightarrow|Leftrightarrow|Longleftrightarrow|iff".split("|")]
 
@@ -1328,8 +1328,9 @@ snip.rv = symbol_list[(index + 1) % len(symbol_list)]
 `
 endsnippet
 
+# as for \xleftarrow, see 4.9 Extensible arrows in doc of amsmath
 context "math()"
-snippet "(\\(leftarrow|longleftarrow|Leftarrow|Longleftarrow))" "next type of left arrow" wr
+snippet "(\\(leftarrow|longleftarrow|Leftarrow|Longleftarrow|xleftarrow))" "next type of left arrow" wr
 `!p
 symbol_list = LeftArrows
 index = symbol_list.index(match.group(1))
@@ -1338,7 +1339,7 @@ snip.rv = symbol_list[(index + 1) % len(symbol_list)]
 endsnippet
 
 context "math()"
-snippet "(\\(rightarrow|longrightarrow|Rightarrow|Longrightarrow))" "next type of right arrow" wr
+snippet "(\\(rightarrow|longrightarrow|Rightarrow|Longrightarrow|xrightarrow))" "next type of right arrow" wr
 `!p
 symbol_list = RightArrows
 index = symbol_list.index(match.group(1))
