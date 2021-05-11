@@ -473,6 +473,13 @@ snippet dm "Math" wA
 \]
 endsnippet
 
+# add comma and period \]. -> .\] and \], -> ,\]
+# replace comma and period ,\]. -> .\]
+# support space between \]  , -> ,\]
+snippet "([,\.]*)\\]\s*([,\.])" "Add ',' '.' for display math" rA
+`!p snip.rv=match.group(2)`\\] 
+endsnippet
+
 context "math()"
 snippet ali "Align" bA
 \begin{aligned}
