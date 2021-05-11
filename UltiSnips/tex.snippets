@@ -2,9 +2,16 @@ global !p
 
 HatSequence = r"\overline \bar \hat \tilde \widetilde \widehat".split()
 
-LeftArrows = r"\leftarrow|\longleftarrow|\Leftarrow|\Longleftarrow".split("|")
+DotsSequence = r"\ldots \cdots \vdots \ddots".split()
 
-RightArrows = r"\rightarrow|\longrightarrow|\Rightarrow|\Longrightarrow".split("|")
+FontSizeSequence = r"\tiny \scriptsize \footnotesize \small \normalsize \large \Large \LARGE \huge \Huge".split()
+
+SpaceSequence = r"\,|\:|\;|\ |\quad|\qquad|\!".split("|")
+
+
+LeftArrows = r"\leftarrow|\longleftarrow|\Leftarrow|\Longleftarrow|\xleftarrow".split("|")
+
+RightArrows = r"\rightarrow|\longrightarrow|\Rightarrow|\Longrightarrow|\xrightarrow".split("|")
 
 LeftrightArrows = ["\\" + x for x in "leftrightarrow|longleftrightarrow|Leftrightarrow|Longleftrightarrow|iff".split("|")]
 
@@ -466,6 +473,13 @@ snippet dm "Math" wA
 \]
 endsnippet
 
+# add comma and period \]. -> .\] and \], -> ,\]
+# replace comma and period ,\]. -> .\]
+# support space between \]  , -> ,\]
+snippet "([,\.]*)\\]\s*([,\.])" "Add ',' '.' for display math" rA
+`!p snip.rv=match.group(2)`\\] 
+endsnippet
+
 context "math()"
 snippet ali "Align" bA
 \begin{aligned}
@@ -598,8 +612,8 @@ snippet floor "floor" iA
 \left\lfloor $1 \right\rfloor$0
 endsnippet
 
-snippet pmat "pmat" w
 context "math()"
+snippet pmat "pmat" w
 \begin{pmatrix} $1 \end{pmatrix} $0
 endsnippet
 
@@ -612,8 +626,8 @@ if not snip.c:
 `
 endsnippet
 
-snippet bmat "bmat" w
 context "math()"
+snippet bmat "bmat" w
 \begin{bmatrix} $1 \end{bmatrix} $0
 endsnippet
 
@@ -955,9 +969,10 @@ snippet abs "abstract value" iA
 \left\vert ${1:${VISUAL}} \right\vert $0
 endsnippet
 
+# See Section 5.1 of the document of amsmath https://texdoc.org/serve/amsmath/0
 priority 100
 context "math()"
-snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv|sup|inf|max|min)' "ln" rwA
+snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv|sup|inf|max|min|dim|ker|Pr)' "ln" rwA
 \\`!p snip.rv = match.group(1)`
 endsnippet
 
@@ -999,11 +1014,6 @@ endsnippet
 context "math()"
 snippet invs "inverse" iA
 ^{-1}
-endsnippet
-
-context "math()"
-snippet ' "prime" iA
-^\prime
 endsnippet
 
 context "math()"
@@ -1264,6 +1274,7 @@ snippet "(?<![\\a-zA-Z])(mu|alpha|sigma|rho|beta|gamma|delta|zeta|eta|varepsilon
 \\`!p snip.rv = match.group(1)`
 endsnippet
 
+# See https://tex.stackexchange.com/questions/37789/using-colon-or-in-formulas
 context "math()"
 snippet : "colon" iA
 \colon
@@ -1290,9 +1301,38 @@ except:
 `
 endsnippet
 
-context "math()"
+# https://www.overleaf.com/learn/latex/Font_sizes,_families,_and_styles
+snippet "(\\(tiny|scriptsize|footnotesize|small|normalsize|large|Large|LARGE|huge|Huge))" "next type of font size" wr
+`!p
+symbol_list = FontSizeSequence
+index = symbol_list.index(match.group(1))
+snip.rv = symbol_list[(index + 1) % len(symbol_list)]
+`
+endsnippet
 
-snippet "(\\(leftarrow|longleftarrow|Leftarrow|Longleftarrow))" "next type of left arrow" wr
+context "math()"
+snippet "(\\(ldots|cdots|vdots|ddots))" "next type of dots" wr
+`!p
+symbol_list = DotsSequence
+index = symbol_list.index(match.group(1))
+snip.rv = symbol_list[(index + 1) % len(symbol_list)]
+`
+endsnippet
+
+# See https://www.overleaf.com/learn/latex/Lengths_in_LaTeX
+priority 300
+context "math()"
+snippet "(\\(,|:|;| |quad|qquad|!))" "3/4/5/normal/18/36/-3em" wr
+`!p
+symbol_list = SpaceSequence
+index = symbol_list.index(match.group(1))
+snip.rv = symbol_list[(index + 1) % len(symbol_list)]
+`
+endsnippet
+
+# as for \xleftarrow, see 4.9 Extensible arrows in doc of amsmath
+context "math()"
+snippet "(\\(leftarrow|longleftarrow|Leftarrow|Longleftarrow|xleftarrow))" "next type of left arrow" wr
 `!p
 symbol_list = LeftArrows
 index = symbol_list.index(match.group(1))
@@ -1301,7 +1341,7 @@ snip.rv = symbol_list[(index + 1) % len(symbol_list)]
 endsnippet
 
 context "math()"
-snippet "(\\(rightarrow|longrightarrow|Rightarrow|Longrightarrow))" "next type of right arrow" wr
+snippet "(\\(rightarrow|longrightarrow|Rightarrow|Longrightarrow|xrightarrow))" "next type of right arrow" wr
 `!p
 symbol_list = RightArrows
 index = symbol_list.index(match.group(1))
