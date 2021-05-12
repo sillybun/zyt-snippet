@@ -995,6 +995,16 @@ snippet RR "real" iA
 endsnippet
 
 context "math()"
+snippet SS "mathcal S" iA
+\mathcal{S}
+endsnippet
+
+context "math()"
+snippet FF "mathcal F" iA
+\mathcal{F}
+endsnippet
+
+context "math()"
 snippet PP "Probability" wA
 \mathbb{P}
 endsnippet
@@ -1152,7 +1162,7 @@ endsnippet
 
 priority 200
 context "math()"
-snippet "(?<![\\a-zA-Z])(mu|alpha|sigma|rho|beta|gamma|delta|zeta|eta|varepsilon|theta|iota|kappa|vartheta|lambda|nu|pi|rho|tau|upsilon|phi|chi|psi|omega|Gamma|Delta|Theta|Lambda|Xi|Pi|Sigma|Upsilon|Phi|Psi|Omega)" "greek" wrA
+snippet "(?<![\\a-zA-Z])(mu|alpha|xi|sigma|rho|beta|gamma|delta|zeta|eta|varepsilon|theta|iota|kappa|vartheta|lambda|nu|pi|rho|tau|upsilon|phi|chi|psi|omega|Gamma|Delta|Theta|Lambda|Xi|Pi|Sigma|Upsilon|Phi|Psi|Omega)" "greek" wrA
 \\`!p snip.rv = match.group(1)`
 endsnippet
 
