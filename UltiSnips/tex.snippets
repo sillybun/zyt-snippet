@@ -398,6 +398,11 @@ snippet beg "begin{} / end{}" bA
 \\end{$1}
 endsnippet
 
+priority 101
+snippet "([-\+])\s*\.\.\." "smart cdots" irA
+`!p snip.rv=match.group(1)` \cdots 
+endsnippet
+
 priority 100
 snippet ... "ldots" iA
 \ldots 
