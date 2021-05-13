@@ -869,7 +869,7 @@ endsnippet
 priority 300
 context "math()"
 snippet dint "integral" wA
-\int_{${1:-\infty}}^{${2:\infty}} ${3:${VISUAL}} \,\mathrm{d} $0
+\int_{${1:-\infty}}^{${2:\infty}} ${3:${VISUAL}} \mathrm{d} $0
 endsnippet
 
 priority 200
@@ -1111,7 +1111,14 @@ endsnippet
 priority 100
 context "math()"
 snippet "(\\?[a-zA-Z]\w*)hat" "hat" riA
-\hat{`!p snip.rv=match.group(1)`}
+`!p
+if not snip.c:
+	temp = match.group(1)
+	if temp == "\\wide":
+		snip.rv = "\\widehat"
+	else:
+		snip.rv = "\\hat{" + temp +"}"
+`
 endsnippet
 
 priority 100
@@ -1120,7 +1127,14 @@ snippet "(\\?[a-zA-Z]\w*)bf" "mathbf" riA
 \mathbf{`!p snip.rv=match.group(1)`}
 endsnippet
 
-snippet "(\\?[a-zA-Z]\w*)(,,)" "Vector postfix" riA
+priority 100
+context "math()"
+snippet "(\\?[a-zA-Z]\w*)cal" "mathbf" riA
+\mathcal{`!p snip.rv=match.group(1)`}
+endsnippet
+
+context "math()"
+snippet "(\\?[a-zA-Z]\w*)(vec)" "Vector postfix" riA
 \vec{`!p snip.rv=match.group(1)`}
 endsnippet
 
@@ -1174,6 +1188,11 @@ endsnippet
 context "math()"
 snippet iid "independent and identical distribution" iA
 \overset{\text{i.i.d.}}{\sim}
+endsnippet
+
+context "math()"
+snippet fourier "fourier kernel" iA
+e^{-2 \pi i x \xi}
 endsnippet
 
 context "math()"

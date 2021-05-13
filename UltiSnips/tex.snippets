@@ -1201,16 +1201,17 @@ snippet "(\\?[a-zA-Z]\w*)bar" "bar" riA
 \overline{`!p snip.rv=match.group(1)`}
 endsnippet
 
-# priority 10
-# context "math()"
-# snippet "hat" "hat" riA
-# \hat{$1}$0
-# endsnippet
-
 priority 100
 context "math()"
 snippet "(\\?[a-zA-Z]\w*)hat" "hat" riA
-\hat{`!p snip.rv=match.group(1)`}
+`!p
+if not snip.c:
+	temp = match.group(1)
+	if temp == "\\wide":
+		snip.rv = "\\widehat"
+	else:
+		snip.rv = "\\hat{" + temp +"}"
+`
 endsnippet
 
 priority 100
@@ -1219,7 +1220,14 @@ snippet "(\\?[a-zA-Z]\w*)bf" "mathbf" riA
 \mathbf{`!p snip.rv=match.group(1)`}
 endsnippet
 
-snippet "(\\?[a-zA-Z]\w*)(,,)" "Vector postfix" riA
+priority 100
+context "math()"
+snippet "(\\?[a-zA-Z]\w*)cal" "mathbf" riA
+\mathcal{`!p snip.rv=match.group(1)`}
+endsnippet
+
+context "math()"
+snippet "(\\?[a-zA-Z]\w*)(vec)" "Vector postfix" riA
 \vec{`!p snip.rv=match.group(1)`}
 endsnippet
 
