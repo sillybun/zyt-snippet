@@ -398,15 +398,27 @@ snippet beg "begin{} / end{}" bA
 \\end{$1}
 endsnippet
 
+
+# For example x_1 x_2  ... x_n x_n (The product of a sequence)
+priority 100
+snippet ... "cdots" iA
+\cdots 
+endsnippet
+# +... -> , \cdots
+# -  ... -> , \cdots
+# add a space if there already is one.
 priority 101
-snippet "([-\+])\s*\.\.\." "smart cdots" irA
-`!p snip.rv=match.group(1)` \cdots 
+snippet "(?<=[-+])\s*\.\.\." "smart cdots" irA
+ \cdots 
+endsnippet
+# It seems that \ldots is only used when , ..., 
+# ,... -> , \ldots
+# ,  ... -> , \ldots
+priority 101
+snippet "(?<=,)(\s*)\.\.\." "smart ldots" irA
+ \ldots 
 endsnippet
 
-priority 100
-snippet ... "ldots" iA
-\ldots 
-endsnippet
 
 snippet table "Table environment" b
 \begin{table}[${1:htpb}]
@@ -459,8 +471,13 @@ snippet =< "implied by" Ai
 endsnippet
 
 context "math()"
-snippet iff "iff" wA
-\iff
+snippet if "if mbox and \iff" wA
+`!p
+if t[1] and t[1][0] == 'f':
+	snip.rv = "\\if"
+else:
+	snip.rv = "\\mbox{if }"
+`$1
 endsnippet
 
 snippet mk "Math" wA
@@ -482,7 +499,7 @@ endsnippet
 # replace comma and period ,\]. -> .\]
 # support space between \]  , -> ,\]
 snippet "([,\.]*)\\]\s*([,\.])" "Add ',' '.' for display math" rA
-`!p snip.rv=match.group(2)`\\] 
+`!p snip.rv=match.group(2)`\\]
 endsnippet
 
 context "math()"
@@ -509,6 +526,31 @@ for (i, x) in enumerate(selectedcode):
 `}\end{align*}
 \]
 endsnippet
+
+# . \\,  -> , \\
+context "math()"
+snippet "[,.]?\s*\\\\\s*([,.])" "" irA
+`!p snip.rv=match.group(1)` \\\\
+endsnippet
+
+#  ,\\
+#  \end{aligned}
+#  \] .
+#  , \\
+#  \end{aligned}
+#  \] .
+#  , \\  
+#    .   \end{aligned}
+#   . \] .
+#  ,   
+#    .   \end{aligned}
+#   . \] .
+#  
+#  ,  .   \end{aligned}
+#   . \],
+# snippet "([,.]?)\s*(\\\\)?(\n?)\s*[,.]?\s*(\\end{aligned})(\n?)\s*[,.]?\s*(\\])\s*([,.])" "align comma" irmA
+# `!p snip.rv = match.group(3) +match.group(7) +match.group(4) +match.group(5) +match.group(6)`
+# endsnippet
 
 context "math()"
 snippet // "Fraction" iA
@@ -600,7 +642,7 @@ snip.rv = subprocess.check_output(['wolframscript', '-code', code])
 endsnippet
 
 snippet == "equals" iA
-&= $1 \\\\
+&= ${1:${VISUAL}} \\\\
 endsnippet
 
 snippet != "equals" iA
@@ -932,7 +974,7 @@ endsnippet
 
 context "math()"
 snippet mcal "mathcal" i
-\mathcal{$1}$0
+\mathcal{${1:$VISUAL}}$0
 endsnippet
 
 context "math()"
@@ -945,6 +987,7 @@ snippet mrm "mathrm" i
 \mathrm{$1}$0
 endsnippet
 
+context "math()"
 snippet lll "l" iA
 \ell
 endsnippet
@@ -977,7 +1020,7 @@ endsnippet
 # See Section 5.1 of the document of amsmath https://texdoc.org/serve/amsmath/0
 priority 100
 context "math()"
-snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv|sup|inf|max|min|dim|ker|Pr)' "ln" rwA
+snippet '(?<!\\)(sin|cos|arccot|cot|csc|ln|log|exp|star|perp|geq|leq|quad|equiv|sup|inf|max|min|dim|ker|Pr|neq|det)' "ln" rwA
 \\`!p snip.rv = match.group(1)`
 endsnippet
 
@@ -1017,7 +1060,7 @@ snippet !> "mapsto" iA
 endsnippet
 
 context "math()"
-snippet invs "inverse" iA
+snippet "\s*invs" "inverse" irA
 ^{-1}
 endsnippet
 
@@ -1154,14 +1197,9 @@ endsnippet
 context "math()"
 snippet "(?<=\s)case" "cases" wrA
 \begin{cases}
-	$1 & $2\\
-	$3 & $4\\
+	$1 & $2\\\\
+	$3 & $4\\\\
 \end{cases}
-endsnippet
-
-context "math()"
-snippet if "if" wA
-\mbox{if }
 endsnippet
 
 snippet SI "SI" iA
@@ -1260,6 +1298,11 @@ endsnippet
 context "math()"
 snippet range "i = 1, \ldots, n" iA
 ${1:i} = ${2:1}, \ldots, ${3:n}
+endsnippet
+
+context "math()"
+snippet list "a_1, ..., a_n" iA
+${1:i}_${2:1}, \ldots, $1_${3:n}
 endsnippet
 
 context "math()"
@@ -1479,4 +1522,66 @@ $0
 \end{frame}
 endsnippet
 
-# vim:ft=snippets
+######################
+## correct typing
+######################
+# Usage:
+# Let n<space> -> "Let $n$ "
+# For each i,<space>  -> For each $i$,<space>
+# 'a', 'A' and 'I' are excluded in this snippet
+# This regex will match string like " s ", " s, " and " s) "
+# It is very useful when there is many single-letter symbols in sentences.
+context "not math()"
+snippet "(?<=\s)([b-zB-HJ-Z0-9])([,.\)]?)\s+" "surround single-letter variable" wrA
+`!p 
+# match.group(1) for the alphebet and the number
+# match.group(2) for a possible comma or period or )
+# when there is no ',' or '.' , match.group(2) = ''
+snip.rv='$'+match.group(1)+'$'+match.group(2)` 
+endsnippet
+
+# snippet "(?<=\s)(\w+\s*[+-=><]\s*\w+)([,.\)]?)\s+" "surround i+1" wrA
+context "not math()"
+snippet "(?<=\s)(\w+\s*[-_+=><]\s*\w)([,.\)]?)\s+" "surround i+1" wrA
+`!p
+# match.group(1) for the alphebet and the number
+# match.group(2) for a possible comma or period or )
+# when there is no ',' or '.' , match.group(2) = ''
+snip.rv='$'+match.group(1)+'$'+match.group(2)`
+endsnippet
+
+context "not math()"
+snippet I. "I\@." wA
+I\@.
+endsnippet
+
+# word .   -> word. 
+# word.  , -> word,
+# $i$ )    -> $i$) 
+context "not math()"
+snippet "(?<=[\w\$])[,.]?\s+([,.\)])" "remove ' ' before ',' '.' ')'" iwrA
+`!p snip.rv=match.group(1)` 
+endsnippet
+
+# ( word .   -> ( word. 
+context "not math()"
+snippet "(?<=\()\s+(\w+)" "remove space after '('" iwrA
+`!p snip.rv=match.group(1)`
+endsnippet
+
+
+context "not math()"
+snippet "(?<=\.)\s*([a-ce-ln-zA-Z])" "Auto upper cases after ." iwrA
+ `!p snip.rv=match.group(1).upper()`
+endsnippet
+
+# 'x  ' .   -> 'x ' 
+# \S to avoid this snippet at the start of line
+context "not math()"
+snippet "(?<=\S)\s{2,}" "remove double spaces" iwrA
+ 
+endsnippet
+
+
+
+# vim ft=snippet
