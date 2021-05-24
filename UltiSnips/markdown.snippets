@@ -377,12 +377,16 @@ endsnippet
 
 
 snippet "\s*mk" "Math" wrA
- `!p
+`!p
 if not snip.c:
+	ret = ""
+	if int(vim.eval('col(".")')) > 1:
+		ret += " "
 	if snip.buffer[0] == "autoscale: true":
-		snip.rv += "$$"
+		ret += "$$"
 	else:
-		snip.rv += "$"
+		ret += "$"
+	snip.rv += ret
 `$1`!p
 if not snip.c:
 	if snip.buffer[0] == "autoscale: true":
@@ -1126,6 +1130,12 @@ if not snip.c:
 	else:
 		snip.rv = "\\hat{" + temp +"}"
 `
+endsnippet
+
+priority 100
+context "math()"
+snippet "(\\?[a-zA-Z]\w*)bb" "mathbb" riA
+\mathbb{`!p snip.rv=match.group(1)`}
 endsnippet
 
 priority 100

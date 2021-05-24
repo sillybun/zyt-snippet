@@ -480,13 +480,24 @@ else:
 `$1
 endsnippet
 
-snippet mk "Math" wA
-$${1:${VISUAL}}$`!p
-if t[2] and t[2][0] not in [',', '.', '?', '-', ' ']:
-	snip.rv = ' '
-else:
-	snip.rv = ''
-`$2
+snippet "\s*mk" "Math" wrA
+`!p
+if not snip.c:
+	ret = ""
+	if int(vim.eval('col(".")')) > 1:
+		ret += " "
+	if snip.buffer[0] == "autoscale: true":
+		ret += "$$"
+	else:
+		ret += "$"
+	snip.rv += ret
+`$1`!p
+if not snip.c:
+	if snip.buffer[0] == "autoscale: true":
+		snip.rv += "$$"
+	else:
+		snip.rv += "$"
+`$0
 endsnippet
 
 snippet dm "Math" wA
@@ -1259,14 +1270,26 @@ endsnippet
 
 priority 100
 context "math()"
+snippet "(\\?[a-zA-Z]\w*)bb" "mathbb" riA
+\mathbb{`!p snip.rv=match.group(1)`}
+endsnippet
+
+priority 100
+context "math()"
 snippet "(\\?[a-zA-Z]\w*)bf" "mathbf" riA
 \mathbf{`!p snip.rv=match.group(1)`}
 endsnippet
 
 priority 100
 context "math()"
-snippet "(\\?[a-zA-Z]\w*)cal" "mathbf" riA
+snippet "(\\?[a-zA-Z]\w*)cal" "mathcal" riA
 \mathcal{`!p snip.rv=match.group(1)`}
+endsnippet
+
+priority 100
+context "math()"
+snippet "(?<!\\)\b([a-zA-Z]+)rm" "mathrm" riA
+\mathrm{`!p snip.rv=match.group(1)`}
 endsnippet
 
 context "math()"
