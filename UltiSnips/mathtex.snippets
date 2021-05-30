@@ -195,29 +195,29 @@ def extract_operator(line):
 		return rv
 
 def findfirstoperator(line):
-    index = 0
-    depth = 0
-    while index < len(line):
-        if line[index] == '\s':
-            index += 1
-            continue
-        elif line[index] in ['{', '(']:
-            depth += 1
-            index += 1
-            continue
-        elif line[index] in ['}', ')']:
-            depth -= 1
-            index += 1
-            continue
-        elif depth <= 0 and line[index] == '=':
-            return index
-        elif depth <= 0 and all(line[index:].startswith(x) for x in ["\\le", "\\ge", ">", "<", "\\succ", "\\prec", "\\sim", "\\ne", "\\not"]):
-            return index
-        else:
-            index += 1
-            continue
-    else:
-        return len(line) - len(line.lstrip())
+		index = 0
+		depth = 0
+		while index < len(line):
+				if line[index] == '\s':
+						index += 1
+						continue
+				elif line[index] in ['{', '(']:
+						depth += 1
+						index += 1
+						continue
+				elif line[index] in ['}', ')']:
+						depth -= 1
+						index += 1
+						continue
+				elif depth <= 0 and line[index] == '=':
+						return index
+				elif depth <= 0 and all(line[index:].startswith(x) for x in ["\\le", "\\ge", ">", "<", "\\succ", "\\prec", "\\sim", "\\ne", "\\not"]):
+						return index
+				else:
+						index += 1
+						continue
+		else:
+				return len(line) - len(line.lstrip())
 
 def findmatched_parentheses(line, lindex):
 	depth = 0
@@ -397,8 +397,8 @@ snippet ali "Align" bA
 ${1:`!p
 selectedcode = [x for x in snip.v.text.split("\n") if x]
 for (i, x) in enumerate(selectedcode):
-    index = findfirstoperator(x)
-    snip.rv += ("" if i == 0 else "    ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
+		index = findfirstoperator(x)
+		snip.rv += ("" if i == 0 else "		 ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
 `}
 \end{aligned}
 endsnippet
@@ -410,8 +410,8 @@ snippet bali "Align with {" bA
 ${1:`!p
 selectedcode = [x for x in snip.v.text.split("\n") if x]
 for (i, x) in enumerate(selectedcode):
-    index = findfirstoperator(x)
-    snip.rv += ("" if i == 0 else "    ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
+		index = findfirstoperator(x)
+		snip.rv += ("" if i == 0 else "		 ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
 `}\end{aligned}
 \]
 endsnippet
@@ -429,14 +429,14 @@ endsnippet
 #  \end{aligned}
 #  \] .
 #  , \\  
-#    .   \end{aligned}
-#   . \] .
-#  ,   
-#    .   \end{aligned}
-#   . \] .
+#		 .	 \end{aligned}
+#		. \] .
+#  ,	 
+#		 .	 \end{aligned}
+#		. \] .
 #  
-#  ,  .   \end{aligned}
-#   . \],
+#  ,	.		\end{aligned}
+#		. \],
 # snippet "([,.]?)\s*(\\\\)?(\n?)\s*[,.]?\s*(\\end{aligned})(\n?)\s*[,.]?\s*(\\])\s*([,.])" "align comma" irmA
 # `!p snip.rv = match.group(3) +match.group(7) +match.group(4) +match.group(5) +match.group(6)`
 # endsnippet
@@ -720,7 +720,7 @@ if snip.context['works'] == 0:
 		# print("line [672] vim.eval(\"getline('.')\"): ###%s###" % vim.eval("getline('.')"))
 		# print("line [673] content: ###%s###" % content)
 		# print("line [674] vim.eval(\"col('.')\"): ###%s###" % vim.eval("col('.')"))
-		candidate = sum([[t[0] for t in re.findall("(?<=" + name  + r"_\{)(([^\{\}]+|\{[^\{\}]+\})+)(?=\})", x)][::-1] for x in content], [])
+		candidate = sum([[t[0] for t in re.findall("(?<=" + name + r"_\{)(([^\{\}]+|\{[^\{\}]+\})+)(?=\})", x)][::-1] for x in content], [])
 		candidate = list(dict.fromkeys(candidate))
 		candidate = [x[len(t[1]):] for x in candidate if x.startswith(t[1]) and len(t[1]) < len(x)]
 		# print("line [679] candidate: ###%s###" % candidate)
@@ -1330,7 +1330,7 @@ endsnippet
 ######################
 # Usage:
 # Let n<space> -> "Let $n$ "
-# For each i,<space>  -> For each $i$,<space>
+# For each i,<space>	-> For each $i$,<space>
 # 'a', 'A' and 'I' are excluded in this snippet
 # This regex will match string like " s ", " s, " and " s) "
 # It is very useful when there is many single-letter symbols in sentences.
@@ -1354,15 +1354,15 @@ snip.rv='$'+match.group(1)+'$'+match.group(2)`
 endsnippet
 
 
-# word .   -> word. 
+# word .	 -> word. 
 # word.  , -> word,
-# $i$ )    -> $i$) 
+# $i$ )		 -> $i$) 
 context "not math()"
 snippet "(?<=[\w\$])[,.]?\s+([,.\)])" "remove ' ' before ',' '.' ')'" iwrA
 `!p snip.rv=match.group(1)` 
 endsnippet
 
-# ( word .   -> ( word. 
+# ( word .	 -> ( word. 
 context "not math()"
 snippet "(?<=\()\s+(\w+)" "remove space after '('" iwrA
 `!p snip.rv=match.group(1)`
@@ -1375,4 +1375,4 @@ snippet "(?<=\.)\s*([a-ce-ln-zA-Z])" "Auto upper cases after ." iwrA
 endsnippet
 
 
-# vim ft=snippet
+# vim: ts=2 sw=2 noet:list:ft=snippets:
