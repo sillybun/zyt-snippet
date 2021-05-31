@@ -74,30 +74,6 @@ def extract_operator(line):
 					continue
 		return rv
 
-def findfirstoperator(line):
-    index = 0
-    depth = 0
-    while index < len(line):
-        if line[index] == '\s':
-            index += 1
-            continue
-        elif line[index] in ['{', '(']:
-            depth += 1
-            index += 1
-            continue
-        elif line[index] in ['}', ')']:
-            depth -= 1
-            index += 1
-            continue
-        elif depth <= 0 and line[index] == '=':
-            return index
-        elif depth <= 0 and all(line[index:].startswith(x) for x in ["\\le", "\\ge", ">", "<", "\\succ", "\\prec", "\\sim", "\\ne", "\\not"]):
-            return index
-        else:
-            index += 1
-            continue
-    else:
-        return len(line) - len(line.lstrip())
 
 def findmatched_parentheses(line, lindex):
 	depth = 0
@@ -122,13 +98,6 @@ def findmatched_parentheses(line, lindex):
 				return index
 	return -1
 
-def vim_left_all(max_line = 100, offset = 0):
-	left = vim.eval("getline('.')[:col('.')-2+(%d)]" % offset)
-	content = [left]
-	currentlinenumber = int(vim.eval("line('.')"))
-	for index in range(currentlinenumber-1, max(0, currentlinenumber - max_line) if max_line > 0 else -1, -1):
-		content.append(vim.eval('getline(%d)' % index))
-	return content
 
 def add_placeholder(snip):
 	info = snip.buffer[snip.line]
@@ -593,5 +562,4 @@ snippet "(?<=\S)\s{2,}" "remove double spaces" iwrA
  
 endsnippet
 
-
-# vim ft=snippet
+# vim: ts=2 sw=2 noet:list:ft=snippets:
