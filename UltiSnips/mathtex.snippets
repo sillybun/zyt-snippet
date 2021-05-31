@@ -398,7 +398,7 @@ ${1:`!p
 selectedcode = [x for x in snip.v.text.split("\n") if x]
 for (i, x) in enumerate(selectedcode):
 		index = findfirstoperator(x)
-		snip.rv += ("" if i == 0 else "		 ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
+		snip.rv += ("" if i == 0 else "    ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
 `}
 \end{aligned}
 endsnippet
@@ -411,7 +411,7 @@ ${1:`!p
 selectedcode = [x for x in snip.v.text.split("\n") if x]
 for (i, x) in enumerate(selectedcode):
 		index = findfirstoperator(x)
-		snip.rv += ("" if i == 0 else "		 ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
+		snip.rv += ("" if i == 0 else "    ") + x[:index] + "&" + x[index:] + "\\\\" + ("" if i == len(selectedcode) - 1 else "\n")
 `}\end{aligned}
 \]
 endsnippet
@@ -549,8 +549,20 @@ snippet floor "floor" iA
 endsnippet
 
 context "math()"
-snippet pmat "pmat" w
-\begin{pmatrix} $1 \end{pmatrix} $0
+snippet pmat "pmat" wm
+\begin{pmatrix}${1:`!p
+# add &
+regex = r"(?<=\w)[ \t]+(?=\w)"
+subst = r"\t&\t"
+snip.rv = re.sub(regex, subst, snip.v.text, 0, re.MULTILINE)
+# add \t\\\n
+snip.rv = ("\t\\\\\n"+snip.mkline()).join([x.strip() for x in snip.rv.split("\n") if x])
+# one line or multiple lines
+if snip.v.text.count('\n') > 1:
+	snip.rv = '\n' + snip.mkline() + snip.rv + '\n' + snip.mkline()
+else:
+	snip.rv = " " + snip.rv + " "
+`}\end{pmatrix} $0
 endsnippet
 
 post_jump "generate_matrix('p', snip)"
@@ -562,9 +574,35 @@ if not snip.c:
 `
 endsnippet
 
+# seperate each element with spaces or \t select them and trigger
+# the snippets bellow, it will be properly wrapped in a matrix environment.
+# Example:
+# select the folling two line in visual mode
+# 1 0 9 2 8
+# 9 8 733 0 7
+# bmat<tab>
+# it will turn to
+# \begin{bmatrix}
+# 1	&	0	&	9	&	2	&	8	\\
+# 9	&	8	&	733	&	0	&	7
+# \end{bmatrix}
+# Hint: This snippet will not check the dimension of the matrix
+# You cannot use this with block selection mode i.e. CTRL-V
 context "math()"
-snippet bmat "bmat" w
-\begin{bmatrix} $1 \end{bmatrix} $0
+snippet bmat "bmat" wm
+\begin{bmatrix}${1:`!p
+# add &
+regex = r"(?<=\w)[ \t]+(?=\w)"
+subst = r"\t&\t"
+snip.rv = re.sub(regex, subst, snip.v.text, 0, re.MULTILINE)
+# add \t\\\n
+snip.rv = ("\t\\\\\n"+snip.mkline()).join([x.strip() for x in snip.rv.split("\n") if x])
+# one line or multiple lines
+if snip.v.text.count('\n') > 1:
+	snip.rv = '\n' + snip.mkline() + snip.rv + '\n' + snip.mkline()
+else:
+	snip.rv = " " + snip.rv + " "
+`}\end{bmatrix} $0
 endsnippet
 
 post_jump "generate_matrix('b', snip)"
@@ -1110,6 +1148,12 @@ priority 100
 context "math()"
 snippet "(\\?[a-zA-Z]\w*)bar" "bar" riA
 \overline{`!p snip.rv=match.group(1)`}
+endsnippet
+
+priority 100
+context "math()"
+snippet "(\\?[a-zA-Z]\w*)dot" "dot" riA
+\dot{`!p snip.rv=match.group(1)`}
 endsnippet
 
 priority 100
