@@ -335,7 +335,10 @@ snippet '^(.*[\w\)\]}"\'])/([a-zA-Z][\w\.]*)/' "apply single value function" wrA
 `!p
 stripped = match.group(1)
 i = start_of_object(stripped)
-snip.rv = stripped[0:i] + match.group(2) + "(" + stripped[i:] + ")"
+if match.group(2) == "touch":
+	snip.rv = stripped[0:i] + match.group(2) + "(lambda: " + stripped[i:] + ")"
+else:
+	snip.rv = stripped[0:i] + match.group(2) + "(" + stripped[i:] + ")"
 `
 endsnippet
 
