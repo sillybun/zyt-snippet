@@ -909,6 +909,7 @@ snippet xx "cross" iA
 endsnippet
 
 priority 100
+context "math()"
 snippet ** "star" iA
 ^{*}
 endsnippet
@@ -917,6 +918,11 @@ priority 200
 context "math()"
 snippet norm "norm" iA
 \|${1:${VISUAL}}\|_{2}$0
+endsnippet
+
+context "not math()"
+snippet lp- "lp-norm" A
+$l_p$-
 endsnippet
 
 context "math()"
@@ -1388,9 +1394,8 @@ snippet "(?<=\s)([b-zB-HJ-Z0-9])([,.\)]?)\s+" "surround single-letter variable" 
 snip.rv='$'+match.group(1)+'$'+match.group(2)` 
 endsnippet
 
-# snippet "(?<=\s)(\w+\s*[+-=><]\s*\w+)([,.\)]?)\s+" "surround i+1" wrA
 context "not math()"
-snippet "(?<=\s)(\w+\s*[-_+=><]\s*\w)([,.\)]?)\s+" "surround i+1" wrA
+snippet "(?<=\s)(\w\s*[-_+=><]\s*\w)([,.\)]?)\s+" "surround i+1" wrA
 `!p
 # match.group(1) for the alphebet and the number
 # match.group(2) for a possible comma or period or )
