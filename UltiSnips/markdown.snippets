@@ -11,22 +11,25 @@ def back_parentheses():
 	# print("right: ##%s##" % right)
 	return right.lstrip().startswith(")") and left.count("(")-1 < right.count(")")
 
+# def math():
+#   if vim_left_last_p1_not_p2(r"https://www.zhihu.com/equation\?tex=\" alt=\"", r"eeimg=\"") and vim_right_first_p1_not_p2(r"eeimg=\"", r"https://www.zhihu.com/equation\?tex=\" alt=\""):
+#     return True
+#   lp = vim_left_paragraph()
+#   rp = vim_right_paragraph()
+#   lp = " ".join(lp)
+#   rp = " ".join(rp)
+#   lp = re.sub(r"(?<!\\)(\\\\)*\\$", "", lp)
+#   rp = re.sub(r"(?<!\\)(\\\\)*\\$", "", rp)
+#   tlp = re.sub(r"(?<!\\)(\\\\)*$$", "", lp)
+#   trp = re.sub(r"(?<!\\)(\\\\)*$$", "", rp)
+#   if tlp.count("$") % 2 == 1 and "$" in trp:
+#     return True
+#   if last_p1_not_p2(lp, "$$", "$") and first_p1_not_p2(rp, "$$", "$") and tlp.count("$$") % 2 == 1:
+#     return True
+#   return False
+
 def math():
-	if vim_left_last_p1_not_p2(r"https://www.zhihu.com/equation\?tex=\" alt=\"", r"eeimg=\"") and vim_right_first_p1_not_p2(r"eeimg=\"", r"https://www.zhihu.com/equation\?tex=\" alt=\""):
-		return True
-	lp = vim_left_paragraph()
-	rp = vim_right_paragraph()
-	lp = " ".join(lp)
-	rp = " ".join(rp)
-	lp = re.sub(r"(?<!\\)(\\\\)*\\$", "", lp)
-	rp = re.sub(r"(?<!\\)(\\\\)*\\$", "", rp)
-	tlp = re.sub(r"(?<!\\)(\\\\)*$$", "", lp)
-	trp = re.sub(r"(?<!\\)(\\\\)*$$", "", rp)
-	if tlp.count("$") % 2 == 1 and "$" in trp:
-		return True
-	if last_p1_not_p2(lp, "$$", "$") and first_p1_not_p2(rp, "$$", "$") and tlp.count("$$") % 2 == 1:
-		return True
-	return False
+	return vim.eval('vimtex#syntax#in_mathzone()') == '1'
 
 def vim_left_paragraph():
 	currentlinenumber = int(vim.eval("line('.')"))
@@ -162,7 +165,7 @@ endsnippet
 context "not math()"
 snippet dm "Math" wA
 $$
-${1}
+${1:${VISUAL}}
 $$$0
 endsnippet
 
@@ -211,6 +214,25 @@ endsnippet
 # `
 # endsnippet
 
+# It automatically extracts the last word in the link and use the word as default title.
+# examples fill $2 automatically [zyt-snippet](https://github.com/sillybun/zyt-snippet)
+# examples add arxiv automatically  [arxiv 2009.12345](https://arxiv.org/abs/2009.12345)
+snippet pslink "paste a link"
+[`!p # match arxiv
+def match_arxiv(str):
+	regex = r"\d{4}\.\d{5}" 
+	matches = re.fullmatch(regex, str)
+	if matches is None:
+		return False
+	else:
+		return True
+
+snip.rv = ""
+if t[2]:
+	if match_arxiv(t[2]):
+		snip.rv = "arxiv " # not very perfect, works only after you go to normal mode after paste
+`${2:${1/.*\/([\w\-#]*)/(?1:$1:)/}}](${1:${VISUAL}})
+endsnippet
 
 snippet head(slide) "head for slide" b
 autoscale: true
@@ -219,4 +241,20 @@ slidenumbers: true
 
 endsnippet
 
+# html code can be inserted to md by surrounding them with ~~~ ~~~
+snippet fold "fold content by inserting html" b
+~~~
+<details>
+<summary>${2:title}</summary>
+~~~
+${1:${VISUAL}}
+~~~
+</details>
+~~~
+endsnippet
+
+context "math()"
+snippet so "so3" A
+so3
+endsnippet
 # vim:ft=snippets
