@@ -331,46 +331,6 @@ snippet beg "begin{} / end{}" bA
 \\end{$1}
 endsnippet
 
-
-# For example x_1 x_2  ... x_n x_n (The product of a sequence)
-priority 100
-snippet ... "cdots" iA
-\cdots 
-endsnippet
-# +... -> , \cdots
-# -  ... -> , \cdots
-# add a space if there already is one.
-priority 101
-snippet "(?<=[-+])\s*\.\.\." "smart cdots" irA
- \cdots 
-endsnippet
-# It seems that \ldots is only used when , ..., 
-# ,... -> , \ldots
-# ,  ... -> , \ldots
-priority 101
-snippet "(?<=,)(\s*)\.\.\." "smart ldots" irA
- \ldots 
-endsnippet
-
-
-snippet => "implies" Ai
-\implies
-endsnippet
-
-snippet =< "implied by" Ai
-\impliedby
-endsnippet
-
-context "math()"
-snippet if "if mbox and \iff" wA
-`!p
-if t[1] and t[1][0] == 'f':
-	snip.rv = "\\if"
-else:
-	snip.rv = "\\mbox{if }"
-`$1
-endsnippet
-
 snippet "\s*mk" "Math" wrA
 `!p
 if not snip.c:
@@ -381,7 +341,7 @@ if not snip.c:
 		ret += "$$"
 	else:
 		ret += "$"
-	snip.rv += ret
+	snip.rv += ret + snip.v.text
 `$1`!p
 if not snip.c:
 	if snip.buffer[0] == "autoscale: true":
@@ -441,6 +401,8 @@ endsnippet
 # `!p snip.rv = match.group(3) +match.group(7) +match.group(4) +match.group(5) +match.group(6)`
 # endsnippet
 
+
+### Fraction
 context "math()"
 snippet // "Fraction" iA
 \\frac{${1:${VISUAL}}}{$2}$0
@@ -487,6 +449,64 @@ while True:
 snip.rv = stripped[0:i] + "\\frac{" + stripped[i+1:-1] + "}"
 `{$1}$0
 endsnippet
+### END Fraction
+
+
+### Smart dots
+# For example x_1 x_2  ... x_n x_n (The product of a sequence)
+priority 100
+context math()
+snippet ... "cdots" iA
+\cdots 
+endsnippet
+# +... -> , \cdots
+# -  ... -> , \cdots
+# add a space if there already is one.
+priority 101
+snippet "(?<=[-+])\s*\.\.\." "smart cdots" irA
+ \cdots 
+endsnippet
+# It seems that \ldots is only used when , ..., 
+# ,... -> , \ldots
+# ,  ... -> , \ldots
+priority 101
+context math()
+snippet "(?<=[,;])(\s*)\.\.\." "smart ldots" irA
+ \ldots 
+endsnippet
+
+
+context math()
+snippet · "unicode -> cdot" iA
+\cdot
+endsnippet
+context math()
+snippet . "cdot" i
+\cdot
+endsnippet
+### END Smart dots
+
+
+snippet => "implies" Ai
+\implies
+endsnippet
+
+snippet =< "implied by" Ai
+\impliedby
+endsnippet
+
+context "math()"
+snippet if "if mbox and \iff" wA
+`!p
+if t[1] and t[1][0] == 'f':
+	snip.rv = "\\if"
+else:
+	snip.rv = "\\mbox{if }"
+`$1
+endsnippet
+
+
+
 
 context "math()"
 snippet '([A-Za-z])(\d)' "auto subscript" wrA
@@ -539,12 +559,19 @@ snippet != "equals" iA
 endsnippet
 
 context "math()"
-snippet ceil "ceil" iA
+snippet ceil "ceil" A
 \left\lceil $1 \right\rceil $0
 endsnippet
 
 context "math()"
-snippet floor "floor" iA
+snippet floor "floor" A
+\left\lfloor $1 \right\rfloor$0
+endsnippet
+
+# alternative trigger |__|
+# "\|_" is excluded
+context "math()"
+snippet "(?<![\\])\|_" "floor" riA
 \left\lfloor $1 \right\rfloor$0
 endsnippet
 
@@ -692,6 +719,10 @@ snippet part "d/dx" w
 \frac{\partial ${1:V}}{\partial ${2:x}} $0
 endsnippet
 
+snippet ∂ "\partial" iA
+\partial 
+endsnippet
+
 snippet diff "d/dx" w
 \frac{\mathrm{d}${1:y}}{\mathrm{d}${2:x}} $0
 endsnippet
@@ -707,8 +738,8 @@ snippet sr "^2" iA
 endsnippet
 
 context "math()"
-snippet "([\w})\]])tp" "transpose" irA
-`!p snip.rv=match.group(1)`^\top
+snippet "(?<=([\w}\)\]]))tp" "transpose" irA
+^\top
 endsnippet
 
 context "math()"
@@ -782,7 +813,11 @@ else:
 endsnippet
 
 snippet ooo "\infty" iA
-\infty
+\infty 
+endsnippet
+
+snippet ∞ "\infty" iA
+\infty 
 endsnippet
 
 snippet rij "mrij" i
@@ -793,20 +828,56 @@ snippet <= "leq" iA
 \leq 
 endsnippet
 
+snippet ≤ "leq" iA
+\leq 
+endsnippet
+
 snippet >= "geq" iA
 \geq 
 endsnippet
+
+snippet ≥ "geq" i
+\geq 
+endsnippet
+
+
+# for all and for
+
+# ## end with space so you need option "r" to enable regex
+context "math()"
+snippet "for " "for and for all text box" riA
+\text{ for } 
+endsnippet
+
+context "math()"
+snippet "\\text{ for }\s*all" "for and for all text box" rwA
+\text{ for all } 
+endsnippet
+
+priority 100
+context "math()"
+snippet "(forall|AA|∀)" "forall" riA
+\forall
+endsnippet
+
+priority 101
+context "math()"
+snippet "(?<=,)\s*(forall|AA)" "forall" riA
+\quad\forall 
+endsnippet
+
+context "math()"
+snippet "for all" "forall" iA
+\text{ for all }  
+endsnippet
+# END for and for all
 
 context "math()"
 snippet EE "exist" iA
 \exists
 endsnippet
 
-context "math()"
-snippet AA "forall" iA
-\forall 
-endsnippet
-
+### Fast subscript
 context "math()"
 snippet xnn "xn" iA
 x_{n}
@@ -817,11 +888,6 @@ snippet ynn "yn" iA
 y_{n}
 endsnippet
 
-
-# context "math()"
-# snippet xii "xi" iA
-# x_{i}
-# endsnippet
 
 priority 100
 context "math()"
@@ -847,25 +913,12 @@ snippet "(\d[a-zA-Z]|\\mu|\\alpha|\\sigma|\\rho|\\beta|\\gamma|\\delta|\\zeta|\\
 `!p snip.rv=match.group(1)`_{j}
 endsnippet
 
-# context "math()"
-# snippet yii "yi" iA
-# y_{i}
-# endsnippet
 
-# context "math()"
-# snippet xjj "xj" iA
-# x_{j}
-# endsnippet
-
-# context "math()"
-# snippet yjj "yj" iA
-# y_{j}
-# endsnippet
-
-priority 100000
+# xup3  -> x_{u+3}
+priority 2000
 context "math()"
-snippet "\b([a-zA-Z])p(\d)" "x[n+1]" riA
-`!p snip.rv=match.group(1)`_{n+`!p snip.rv=match.group(2)`}
+snippet "(?!=^\\)([a-zA-Z])([a-zA-Z])p(\d)" "x[n+1]" rA
+`!p snip.rv=match.group(1)`_{`!p snip.rv=match.group(2)`+`!p snip.rv=match.group(3)`}
 endsnippet
 
 context "math()"
@@ -904,19 +957,46 @@ snippet "(?<!\\)nabla" "nabla" irA
 endsnippet
 
 context "math()"
+snippet "(?<!\\)grad" "nabla" irA
+\nabla 
+endsnippet
+
+context "math()"
 snippet xx "cross" iA
 \times 
 endsnippet
 
+context "math()"
+snippet × "cross" i
+\times 
+endsnippet
+
 priority 100
+context "math()"
 snippet ** "star" iA
 ^{*}
 endsnippet
+
+context "math()"
+snippet opt "optimal value - supersucript star" iA
+^{*}
+endsnippet
+
+# priority 100
+# context "math()"
+# snippet "([fVvQqxy])opt" "optimal value" riA
+# `!p snip.rv=match.group(1)`^*
+# endsnippet
 
 priority 200
 context "math()"
 snippet norm "norm" iA
 \|${1:${VISUAL}}\|_{2}$0
+endsnippet
+
+context "not math()"
+snippet "l([0-9p])-" "lp-norm" rA
+$l_`!p snip.rv=match.group(1)`$-
 endsnippet
 
 context "math()"
@@ -952,6 +1032,11 @@ endsnippet
 priority 100
 context "math()"
 snippet -> "to" iA
+\to 
+endsnippet
+
+context "math()"
+snippet → "to" iA
 \to 
 endsnippet
 
@@ -1015,6 +1100,11 @@ endsnippet
 
 snippet notin "not in " iA
 \not\in 
+endsnippet
+
+context "math()"
+snippet ∈ "in " iA
+\in 
 endsnippet
 
 context "math()"
@@ -1122,10 +1212,29 @@ endsnippet
 
 snippet bigopt "Optimization problem" iA
 \begin{align*}
-	\min &\quad ${1:f(x)}\\\\
-	\text{s.t.} &\quad ${2:g(x)} \leq 0\\\\
-				&\quad ${3:h(x)} = 0\\\\
+	\min \quad& ${1:f(x)}\\\\
+	\text{s.t.}\quad&${2:g(x)} \leq 0\\\\
+				& ${3:h(x)} = 0\\\\
 \end{align*}
+endsnippet
+
+
+context "math()"
+snippet \minimize "Optimization problem" iA
+\begin{aligned}
+	\min \quad& ${1:f(x)}\\\\
+	\text{s.t.}\quad& ${2:g(x)} \leq 0\\\\
+				& ${3:h(x)} = 0\\\\
+\end{aligned}
+endsnippet
+
+context "math()"
+snippet \minst "minimize" wmA
+\begin{aligned}
+\operatorname*{minimize}_{$1}\quad &  ${2:f_i(x_i)    } \\\\
+\operatorname{subject\\ to}\quad   & $3 \\\\
+                           & $0
+\end{aligned}
 endsnippet
 
 snippet bigmax "Optimization problem" iA
@@ -1145,12 +1254,20 @@ snippet cvec "column vector" iA
 endsnippet
 
 
+priority 10
+context "math()"
+snippet "bar" "bar" riA
+\overline{$1}$0
+endsnippet
+
 priority 100
 context "math()"
 snippet "(\\?[a-zA-Z]\w*)bar" "bar" riA
 \overline{`!p snip.rv=match.group(1)`}
 endsnippet
 
+# Sadly this snippet will translate \odot ⊙
+# \alphadot -> \dot{\alpha}
 priority 100
 context "math()"
 snippet "(\\?[a-zA-Z]\w*)dot" "dot" riA
@@ -1168,6 +1285,23 @@ if not snip.c:
 	else:
 		snip.rv = "\\hat{" + temp +"}"
 `
+endsnippet
+
+
+context "math()"
+snippet ≡ "equiv" iA
+\equiv
+endsnippet
+
+priority 100
+context "math()"
+snippet "(\\?[a-zA-Z]\w*)til" "tilde" riA
+\tilde{`!p snip.rv=match.group(1)`}
+endsnippet
+
+context "math()"
+snippet "(\\?[a-zA-Z]\w*)~~" "tilde" riA
+\tilde{`!p snip.rv=match.group(1)`}
 endsnippet
 
 priority 100
@@ -1243,6 +1377,10 @@ snippet eps "epsilon" wA
 \epsilon
 endsnippet
 
+context "math()"
+snippet opn "operatorname" iA
+\operatorname{${1:${VISUAL}}}
+endsnippet
 priority 100
 context "math()"
 snippet "(?<![\\a-zA-Z])(tr|diag|rank|lcm)" "math function" wr
@@ -1259,6 +1397,11 @@ endsnippet
 context "math()"
 snippet : "colon" iA
 \colon
+endsnippet
+
+context "math()"
+snippet \colon= "colon" iA
+:=
 endsnippet
 
 context "math()"
@@ -1300,10 +1443,13 @@ snip.rv = symbol_list[(index + 1) % len(symbol_list)]
 `
 endsnippet
 
-# See https://www.overleaf.com/learn/latex/Lengths_in_LaTeX
+# Space in latex
+# See https://www.overleaf.com/learn/latex/Spacing_in_math_mode#Reference_guide
+# \quad : space equal to the current font size (= 18 mu)
+# \ (space after backslash!):	equivalent of space in normal text
 priority 300
 context "math()"
-snippet "(\\(,|:|;| |quad|qquad|!))" "3/4/5/normal/18/36/-3em" wr
+snippet "(\\(,|:|;| |quad|qquad|!))" "3/4/5/normal/18/36/-3mu" wr
 `!p
 symbol_list = SpaceSequence
 index = symbol_list.index(match.group(1))
@@ -1370,6 +1516,18 @@ $0
 \end{frame}
 endsnippet
 
+
+### Label and reference
+context "math()"
+snippet label "eqref" A
+\eqref{${VISUAL}}
+endsnippet
+
+snippet eqref "eqref" A
+\eqref{${VISUAL}}
+endsnippet
+### END Label and reference
+
 ######################
 ## correct typing
 ######################
@@ -1380,7 +1538,7 @@ endsnippet
 # This regex will match string like " s ", " s, " and " s) "
 # It is very useful when there is many single-letter symbols in sentences.
 context "not math()"
-snippet "(?<=\s)([b-zB-HJ-Z0-9])([,.\)]?)\s+" "surround single-letter variable" wrA
+snippet "(?<=\s)([b-zB-HJ-Z])([,.\)]?)\s+" "surround single-letter variable" wrA
 `!p 
 # match.group(1) for the alphebet and the number
 # match.group(2) for a possible comma or period or )
@@ -1388,9 +1546,23 @@ snippet "(?<=\s)([b-zB-HJ-Z0-9])([,.\)]?)\s+" "surround single-letter variable" 
 snip.rv='$'+match.group(1)+'$'+match.group(2)` 
 endsnippet
 
-# snippet "(?<=\s)(\w+\s*[+-=><]\s*\w+)([,.\)]?)\s+" "surround i+1" wrA
+# Usage:
+# 2n -> $2n$ 
+# 2N -> $2N$ 
+# 2mn -> $2mn$ 
+# character like ',' '.' ')' will not stop this snippet, just like the previous one
+# This snippet in fact only match words starting with numbers and following with all alphabets.
 context "not math()"
-snippet "(?<=\s)(\w+\s*[-_+=><]\s*\w)([,.\)]?)\s+" "surround i+1" wrA
+snippet "(?<=\s)([0-9]+[a-zA-Z]+)([,.\)]?)\s+" "surround word starting with number" wrA
+`!p 
+# match.group(1) for the words staralphebet and the number
+# match.group(2) for a possible comma or period or )
+# when there is no ',' or '.' , match.group(2) = ''
+snip.rv='$'+match.group(1)+'$'+match.group(2)` 
+endsnippet
+
+context "not math()"
+snippet "(?<=\s)(\w\s*[-_+=><]\s*\w)([,.\)]?)\s+" "surround i+1" wrA
 `!p
 # match.group(1) for the alphebet and the number
 # match.group(2) for a possible comma or period or )
@@ -1414,10 +1586,11 @@ snippet "(?<=\()\s+(\w+)" "remove space after '('" iwrA
 endsnippet
 
 
-context "not math()"
-snippet "(?<=\.)\s*([a-ce-ln-zA-Z])" "Auto upper cases after ." iwrA
- `!p snip.rv=match.group(1).upper()`
-endsnippet
+# This is often annoying when you insert code or website in markdown
+# context "not math()"
+# snippet "(?<=\.)\s*([a-ce-ln-zA-Z])" "Auto upper cases after ." iwrA
+ # `!p snip.rv=match.group(1).upper()`
+# endsnippet
 
 
 # vim: ts=2 sw=2 noet:list:ft=snippets:
