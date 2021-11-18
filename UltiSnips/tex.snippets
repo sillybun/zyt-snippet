@@ -392,26 +392,6 @@ snippet pac "Package" b
 endsnippet
 
 
-snippet "\s*mk" "Math" wrA
-`!p
-if not snip.c:
-	ret = ""
-	if int(vim.eval('col(".")')) > 1:
-		ret += " "
-	if snip.buffer[0] == "autoscale: true":
-		ret += "$$"
-	else:
-		ret += "$"
-	snip.rv += ret
-`$1`!p
-if not snip.c:
-	if snip.buffer[0] == "autoscale: true":
-		snip.rv += "$$"
-	else:
-		snip.rv += "$"
-`$0
-endsnippet
-
 snippet dm "Math" wA
 \[
 	${1:${VISUAL}}
